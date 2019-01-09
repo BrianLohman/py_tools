@@ -15,6 +15,10 @@ args = parser.parse_args()
 # read in variant table
 variant_table = pandas.read_table(args.variants, low_memory = False)
 
+# drop any duplicates and write to file
+variant_table = variant_table.drop_duplicates()
+variant_table.to_csv("dedup_"+args.variants, sep = '\t', index = False)
+
 # sample down to genes that pass filters
 # predicated impact
 variant_table = variant_table.loc[variant_table['impact'].isin(['MED','HIGH'])]

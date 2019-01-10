@@ -1,5 +1,6 @@
 # assign individuals to a bin by their mutation load
 # uses the input of variant_table.nim
+# currently only considering probands of EUR ancestry, as defined by peddy
 
 import argparse
 import pandas
@@ -19,7 +20,7 @@ variant_table = pandas.read_table(args.variants, low_memory = False)
 variant_table = variant_table.drop_duplicates()
 variant_table.to_csv("dedup_"+args.variants, sep = '\t', index = False)
 
-# sample down to genes that pass filters
+# sample down to variants that pass filters
 # predicated impact
 variant_table = variant_table.loc[variant_table['impact'].isin(['MED','HIGH'])]
 
@@ -27,7 +28,7 @@ variant_table = variant_table.loc[variant_table['impact'].isin(['MED','HIGH'])]
 variant_table = variant_table.loc[variant_table['sfari_score'] <= args.sfari]
 
 # gnomad allele frequency
-#variant_table = variant_table.loc[variant_table['gnomAD_AF'] <= args.gnomad]
+variant_table = variant_table.loc[variant_table['gnomAD_AF'] <= args.gnomad]
 
 # sum accros individuals into new data frame
 # swap all occurances of -1 for 0
@@ -59,6 +60,9 @@ def which_quartile(i):
 	return "2"
 
 probands['group'] = probands['n_variants'].apply(which_quartile)
+
+# drop the n_variants columnn
+probands = probands.drop(['n_variants'], axis = 1)
 
 # write to file
 probands.to_csv(args.outfile, sep = '\t')

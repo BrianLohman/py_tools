@@ -65,4 +65,4 @@ probands['group'] = probands['n_variants'].apply(which_quartile)
 probands = probands.drop(['n_variants'], axis = 1)
 
 # write to file
-probands.to_csv(args.outfile, sep = '\t')
+probands.to_csv(args.outfile, sep = '\t', index = False)

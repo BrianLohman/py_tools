@@ -42,8 +42,13 @@ med = []
 high = []
 for sample, values in data.iteritems():
 	med.append(values['MED'])
-	high.append(values['HIGH'])
-	out.write('\t'.join([sample, str(values['LOW']), str(values['MED']), str(values['HIGH'])]))
+	high_val = 0
+	try:
+		high_val = values['HIGH']
+	except KeyError:
+		pass
+	high.append(high_val)
+	out.write('\t'.join([sample, str(values['LOW']), str(values['MED']), str(high_val)]))
 
 # make the plot
 trace0 = go.Box(

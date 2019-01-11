@@ -63,4 +63,4 @@ layout = go.Layout(
 
 fig = go.Figure(data = plot_data, layout = layout)
 
-plot(fig, filename = sys.argv[1]+"_variant_plot.html", validate = False)
+plot(fig, filename = sys.argv[1]+"_variant_plot.html", validate = False, auto_open = False)

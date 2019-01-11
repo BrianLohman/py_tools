@@ -11,7 +11,7 @@ init_notebook_mode(connected=True)
 
 # define I/O
 variants = pandas.read_table(sys.argv[1], low_memory = False)
-out = open("individuals_by_impact"+sys.argv[1], 'w')
+out = open("individuals_by_impact_"+sys.argv[1], 'w')
 
 # count of low, med, and high impact mutations for each individual
 # make a list of all the sample names
@@ -47,10 +47,12 @@ for sample, values in data.iteritems():
 
 # make the plot
 trace0 = go.Box(
-	y = np.asarray(med)
+	y = np.asarray(med),
+	name = 'MED Impact'
 )
 trace1 = go.Box(
-	y = np.asarray(high)
+	y = np.asarray(high),
+	name = 'HIGH Impact'
 )
 plot_data = [trace0, trace1]
 
@@ -61,4 +63,4 @@ layout = go.Layout(
 
 fig = go.Figure(data = plot_data, layout = layout)
 
-plot(fig, filename = sys.argv[1]+"variant_plot.html", validate = False)
+plot(fig, filename = sys.argv[1]+"_variant_plot.html", validate = False)

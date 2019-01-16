@@ -41,13 +41,11 @@ counts['IID'] = ids
 counts.columns = ['n_variants', 'IID']
 
 # add the PRS by ID
-simons = pandas.read_table("/scratch/ucgd/lustre/work/u0806040/data/simons_master.txt", low_memory = False)
+simons = pandas.read_table("/scratch/ucgd/lustre/work/u0806040/data/15_Jan_19_Simons_master_ancestry_corrected_PRS.txt", low_memory = False)
 master = simons.merge(counts, on = 'IID')
 probands = master.loc[master['family_member'] == 'p1']
 probands = probands.loc[probands['ancestry.prediction'] == 'EUR']
-probands = probands.drop(probands.columns[0], axis = 'columns')
-probands = probands.drop(probands.columns[1:119], axis = 'columns')
-probands = probands.drop(probands.columns[35:37], axis = 'columns')
+probands = probands.drop(probands.columns[0:122], axis = 'columns')
 
 # assign bins
 summary = probands['n_variants'].describe()

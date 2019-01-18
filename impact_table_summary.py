@@ -62,7 +62,7 @@ trace0 = go.Box(
 )
 trace1 = go.Box(
 	y = np.asarray(high),
-	name = 'HIGH Impact'
+	name = 'HIGH Impact',
 	text = sample_id,
 	hoverinfo = 'y+sample_id'
 )

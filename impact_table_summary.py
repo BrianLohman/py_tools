@@ -58,13 +58,13 @@ trace0 = go.Box(
 	y = np.asarray(med),
 	name = 'MED Impact',
 	text = sample_id,
-	hoverinfo = 'y+sample_id'
+	hoverinfo = 'y+text'
 )
 trace1 = go.Box(
 	y = np.asarray(high),
 	name = 'HIGH Impact',
 	text = sample_id,
-	hoverinfo = 'y+sample_id'
+	hoverinfo = 'y+text'
 )
 plot_data = [trace0, trace1]
 

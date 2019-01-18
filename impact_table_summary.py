@@ -40,7 +40,10 @@ for i in result:
 # save observations of low and high, send to file
 med = []
 high = []
+sample_id = []
+
 for sample, values in data.iteritems():
+	sample_id.append(sample)
 	med.append(values['MED'])
 	high_val = 0
 	try:
@@ -53,11 +56,15 @@ for sample, values in data.iteritems():
 # make the plot
 trace0 = go.Box(
 	y = np.asarray(med),
-	name = 'MED Impact'
+	name = 'MED Impact',
+	text = sample_id,
+	hoverinfo = 'y+sample_id'
 )
 trace1 = go.Box(
 	y = np.asarray(high),
 	name = 'HIGH Impact'
+	text = sample_id,
+	hoverinfo = 'y+sample_id'
 )
 plot_data = [trace0, trace1]
 

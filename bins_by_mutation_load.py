@@ -60,7 +60,7 @@ def which_quartile(i):
 probands['group'] = probands['n_variants'].apply(which_quartile)
 
 # drop the n_variants columnn
-probands = probands.drop(['n_variants'], axis = 1)
+#probands = probands.drop(['n_variants'], axis = 1)
 
 # write to file
 probands.to_csv(args.outfile, sep = '\t', index = False)

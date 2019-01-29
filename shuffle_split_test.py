@@ -36,6 +36,9 @@ half_1['group'] = half_1['n_variants'].apply(which_quartile)
 # drop the n_variants column
 half_1 = half_1.drop(['n_variants'], axis = 1)
 
+# drop the middle group
+half_1 = half_1[half_1.group != 2]
+
 # write to file
 half_1.to_csv("half_1_EUR_probands_for_clinco.txt", sep = '\t', index = False)
 
@@ -44,7 +47,6 @@ half_2['group'] = half_2['n_variants'].apply(which_quartile)
 
 half_2 = half_2.drop(['n_variants'], axis = 1)
 
+half_2 = half_2[half_2.group != 1]
+
 half_2.to_csv("half_2_EUR_probands_for_clinco.txt", sep = '\t', index = False)
-
-
-

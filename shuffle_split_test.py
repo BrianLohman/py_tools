@@ -52,12 +52,16 @@ probands = master.loc[master['family_member'] == 'p1']
 probands = probands.loc[probands['ancestry.prediction'] == 'EUR']
 probands = probands.drop(probands.columns[0:122], axis = 'columns')
 
+print probands.shape
+
 # randomly split half
 x = np.random.rand(len(probands)) < 0.5
 
 half_1 = probands[x]
-half_2 = probands[~x]
+print str(len(half_1)) + " probands in first half"
 
+half_2 = probands[~x]
+print str(len(half_2)) + " probands in second half"
 
 # FIRST HALF
 # assign bins
@@ -76,7 +80,7 @@ half_1['group'] = half_1['n_variants'].apply(which_quartile)
 half_1 = half_1.drop(['n_variants'], axis = 1)
 
 # drop the middle group
-half_1 = half_1[half_1.group != 2]
+half_1 = half_1.loc[half_1['group'].isin(["1","3"])]
 
 # write to file
 half_1.to_csv(sys.argv[3]+"_half_1_EUR_probands_for_clinco.txt", sep = '\t', index = False)
@@ -86,6 +90,6 @@ half_2['group'] = half_2['n_variants'].apply(which_quartile)
 
 half_2 = half_2.drop(['n_variants'], axis = 1)
 
-half_2 = half_2[half_2.group != 1]
+half_2 = half_2.loc[half_2['group'].isin(["1","3"])]
 
 half_2.to_csv(sys.argv[3]+"_half_2_EUR_probands_for_clinco.txt", sep = '\t', index = False)

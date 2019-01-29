@@ -7,8 +7,8 @@ import pandas
 import sys
 import numpy as np
 
-file_a = pandas.read_table(sys.argv[1])
-file_b = pandas.read_table(sys.argv[2])
+file_a = pandas.read_table(sys.argv[1], low_memory = False)
+file_b = pandas.read_table(sys.argv[2], low_memory = False)
 
 # filters: only high and medium impact mutations in genes with decent sfari score (<=5)
 file_a = file_a.loc[file_a['impact'].isin(['MED', 'HIGH'])]

@@ -3,12 +3,21 @@
 # 	randomly split half
 #	test each half: differences in mean PRS by group (defined by n-variants)
 
+# USAGE: python shuffle_split_test.py --file_a [variant table] --file_b [variant table] --prefix [out file prefix]
+
 import pandas
 import sys
 import numpy as np
+import argparse
 
-file_a = pandas.read_table(sys.argv[1], low_memory = False)
-file_b = pandas.read_table(sys.argv[2], low_memory = False)
+parser = argparse.ArgumentParser(description = 'join two variant tables, randomly split half, write clinco input to file')
+parser.add_argument('--file_a', dest = 'file_a', help = 'first variant table')
+parser.add_argument('--file_b', dest = 'file_b', help = 'second variant table')
+parser.add_argument('--prefix', dest = 'prefix', help = 'prefix for output file names')
+args = parser.parse_args()
+
+file_a = pandas.read_table(args.file_a, low_memory = False)
+file_b = pandas.read_table(args.file_b, low_memory = False)
 
 # filters: only high and medium impact mutations in genes with decent sfari score (<=5)
 file_a = file_a.loc[file_a['impact'].isin(['MED', 'HIGH'])]
@@ -92,4 +101,4 @@ half_2 = half_2.drop(['n_variants'], axis = 1)
 
 half_2 = half_2.loc[half_2['group'].isin(["1","3"])]
 
-half_2.to_csv(sys.argv[3]+"_half_2_EUR_probands_for_clinco.txt", sep = '\t', index = False)
+half_2.to_csv(args.prefix+"_half_2_EUR_probands_for_clinco.txt", sep = '\t', index = False)

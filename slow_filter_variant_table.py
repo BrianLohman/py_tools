@@ -25,6 +25,15 @@ voi = voi[voi['gene'].isin(genes)]
 voi = voi.drop(voi.columns[0:4], axis = 'columns')
 voi = voi.drop(voi.columns[1:4], axis = 'columns')
 
-for gene in genes:
-	tmp = voi.loc[voi['gene'] == gene ]
+samples = list(voi)[1:]
 
+table = {}
+
+for g in genes:
+	tmp = voi.loc[voi['gene'] == g ]
+	tmp = tmp.drop(['gene'], axis = 'columns')
+	table[g] = tmp.sum()
+
+# write to file
+for g in genes:
+	out.write('\t'.join([g, table[g]])

@@ -2,9 +2,13 @@
 
 import pandas
 import sys
+import numpy
 
 # read in table of variants
 variants = pandas.read_table(sys.argv[1], low_memory = False)
+
+# define out file 
+out = open("test_out.txt", "w")
 
 # define list of genes of interest
 genes = ['PLXNA3','CACNA1A','PLXNB1','EP300','CREBBP','PLXNA4','ROBO1','OPRM1','GNAS','SLIT3','ITPR1','EPHB6','NOS1','NTRK1','CACNA1C','ROBO2','GRID1','GRM8','PLCB1','SRGAP3','SEMA5A', 'PTGER3']
@@ -34,6 +38,7 @@ for g in genes:
 	tmp = tmp.drop(['gene'], axis = 'columns')
 	table[g] = tmp.sum()
 
+
 # write to file
 for g in genes:
-	out.write('\t'.join([g, table[g]])
+	out.write('\t'.join([g, '\t'.join(str(list(table[g])))+'\n']))

@@ -29,10 +29,16 @@ voi = voi[voi['gene'].isin(genes)]
 voi = voi.drop(voi.columns[0:4], axis = 'columns')
 voi = voi.drop(voi.columns[1:4], axis = 'columns')
 
+# replace -1 (missing) with 0 in preparation for summing columns
+voi = voi.replace(to_replace = -1, value = 0)
+
+# make list of samples
 samples = list(voi)[1:]
 
+# empty table for gene and sums by individusl
 table = {}
 
+# loop through genes, summing the genotypes for each indivudal
 for g in genes:
 	tmp = voi.loc[voi['gene'] == g ]
 	tmp = tmp.drop(['gene'], axis = 'columns')

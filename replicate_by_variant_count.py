@@ -20,7 +20,7 @@ samples = samples.reset_index()
 
 # check gene order
 if list(samples['gene']) != list(gene_importance['gene']):
-	print "great success!"
+	print "sample order error!"
 	sys.exit(1)
 
 # calculate spearman rho between each sample and the standard

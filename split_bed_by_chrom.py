@@ -7,7 +7,7 @@ import pandas
 bedfile = sys.argv[1]
 prefix = sys.argv[2]
 
-bed = pandas.read_table(bedfile, header = False)
+bed = pandas.read_table(bedfile, header = None)
 bed.columns = ['chrom', 'start', 'end']
 
 # list of chroms

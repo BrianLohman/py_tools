@@ -8,7 +8,7 @@ import numpy
 variants = pandas.read_table(sys.argv[1], low_memory = False)
 
 # define out file 
-out = open(sys.argv[1]+"_out.txt", "w")
+out = open(sys.argv[1][:-4]+"_variants_in_genes_by_individual.txt", "w")
 
 # define list of genes of interest
 genes = ['PLXNA3','CACNA1A','PLXNB1','EP300','CREBBP','PLXNA4','ROBO1','OPRM1','GNAS','SLIT3','ITPR1','EPHB6','NOS1','NTRK1','CACNA1C','ROBO2','GRID1','GRM8','PLCB1','SRGAP3','SEMA5A', 'PTGER3']

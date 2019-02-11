@@ -2,6 +2,9 @@
 # read in a data frame samples and counts of variants in said genes
 # return a list of samples with the highest Spearman Rho (sample variant counts vs specified list)
 
+# USAGE:
+# python replicate_by_variant_count.py [table: rows = genes, columns = individuals] [prefix for output file] 
+
 import sys
 import pandas
 import scipy.stats

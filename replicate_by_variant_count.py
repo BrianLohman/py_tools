@@ -3,7 +3,7 @@
 # return a list of samples with the highest Spearman Rho (sample variant counts vs specified list)
 
 # USAGE:
-# python replicate_by_variant_count.py [table: rows = genes, columns = individuals] [prefix for output file] 
+# python replicate_by_variant_count.py [table: rows = genes, columns = count of variants, gene neame] [table: rows = genes, columns = individuals] 
 
 import sys
 import pandas
@@ -43,4 +43,4 @@ y = x.sort_values(['cor'], ascending = False)
 #print y.head()
 
 # print to file
-y.to_csv(sys.argv[2]+"_sample_rho.txt", sep = '\t', header = False)
+y.to_csv(sys.argv[2][:-4]+"_sample_rho.txt", sep = '\t', header = False)

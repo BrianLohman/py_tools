@@ -41,7 +41,39 @@ probands.compute()
 eur_probands = probands.loc[probands['ancestry.prediction'] == 'EUR'] # of EUR ancestry
 eur_probands.compute()
 
-proband_ids = probands['IID'] # collect IDs
+proband_ids = eur_probands['IID'] # collect IDs
 proband_ids.compute()
 
-print proband_ids
+print proband_ids # does not print
+
+"""
+#filter down to medium and and high impact
+voi = variants[variants['impact'].isin(['MED', 'HIGH'])]
+
+# filter down variants to those in gens of interest
+voi = voi[voi['gene'].isin(genes)]
+
+# reorganize data frame so that rows are genes of interest, columns are IIDs and value are coutns of variants
+voi = voi.drop(voi.columns[0:4], axis = 'columns')
+voi = voi.drop(voi.columns[1:4], axis = 'columns')
+
+# replace -1 (missing) with 0 in preparation for summing columns
+voi = voi.replace(to_replace = -1, value = 0)
+
+# make list of samples
+samples = list(voi)[1:]
+
+# empty table for gene and sums by individusl
+table = {}
+
+# loop through genes, summing the genotypes for each indivudal
+for g in genes:
+	tmp = voi.loc[voi['gene'] == g ]
+	tmp = tmp.drop(['gene'], axis = 'columns')
+	table[g] = tmp.sum()
+			
+# write to file
+out.write('\t'.join(['gene', '\t'.join([str(i) for i in samples])])+'\n')
+for g in genes:
+	out.write('\t'.join([g, '\t'.join([str(i) for i in list(table[g])])+'\n']))probands.compute()
+"""

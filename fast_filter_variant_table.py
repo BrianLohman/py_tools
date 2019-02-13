@@ -15,8 +15,9 @@ parser.add_argument('-o', '--out', dest = 'out', help = 'output file name')
 args = parser.parse_args()
 
 # read in table of variants
-variants = ddf.read_table(args.variants, blocksize = 500e6) # 1 GB blocks
+variants = ddf.read_table(args.variants, blocksize = 500e6) # 500 MB blocks
 #print variants.head()
+print 'variants read in'
 
 # define out file
 out = open(args.out, "w")
@@ -24,8 +25,6 @@ out = open(args.out, "w")
 # define list of genes of interest
 with open(args.genes) as g:
 	genes_of_interest = g.read().splitlines()
-
-#print genes
 
 # make list of EUR proband IDs
 master = ddf.read_table("/scratch/ucgd/lustre/work/u0806040/data/15_Jan_19_Simons_master_ancestry_corrected_PRS.txt", blocksize = 25e6, dtype={'other_dx_axis_i': 'object', 'other_dx_axis_ii': 'object', 'other_dx_icd': 'object'}) # 25 MB blocks
@@ -44,8 +43,6 @@ eur_probands = probands.loc[probands['ancestry.prediction'] == 'EUR']
 # collect IIDs
 proband_ids = eur_probands['IID']
 
-print proband_ids.head()
-
 # variant filters
 # medium and and high impact
 med_high = variants[variants['impact'].isin(['MED', 'HIGH'])]
@@ -57,6 +54,8 @@ voi = med_high[med_high ['gene'].isin(genes_of_interest)]
 # drop metadata columns that are not needed in output
 voi = voi.drop(voi.columns[0:4], axis = 'columns')
 voi = voi.drop(voi.columns[1:4], axis = 'columns')
+
+print 'filtered variants'
 
 # convert back to pandas now that the data frame is small
 voi = voi.compute()
@@ -70,11 +69,15 @@ samples = list(voi)[1:]
 # empty table for gene and sums by individusl
 table = {}
 
+print 'summing variants per gene for each sample'
+
 # loop through genes, summing the genotypes for each indivudal
 for g in genes_of_interest:
 	tmp = voi.loc[voi['gene'] == g ]
 	tmp = tmp.drop(['gene'], axis = 'columns')
 	table[g] = tmp.sum()
+
+print 'witing to file'
 
 # write to file
 out.write('\t'.join(['gene', '\t'.join([str(i) for i in samples])])+'\n')

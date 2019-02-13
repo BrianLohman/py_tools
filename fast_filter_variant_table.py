@@ -15,7 +15,7 @@ parser.add_argument('-o', '--out', dest = 'out', help = 'output file name')
 args = parser.parse_args()
 
 # read in table of variants
-variants = ddf.read_table(args.variants, blocksize = 10e8) # 1 GB blocks
+variants = ddf.read_table(args.variants, blocksize = 500e6) # 1 GB blocks
 #print variants.head()
 
 # define out file
@@ -23,7 +23,7 @@ out = open(args.out, "w")
 
 # define list of genes of interest
 with open(args.genes) as g:
-	genes = g.read().splitlines()
+	genes_of_interest = g.read().splitlines()
 
 #print genes
 
@@ -31,31 +31,35 @@ with open(args.genes) as g:
 master = ddf.read_table("/scratch/ucgd/lustre/work/u0806040/data/15_Jan_19_Simons_master_ancestry_corrected_PRS.txt", blocksize = 25e6, dtype={'other_dx_axis_i': 'object', 'other_dx_axis_ii': 'object', 'other_dx_icd': 'object'}) # 25 MB blocks
 
 # text to numeric for speed
-#master['family_member'] = master['family_member'].astype('category').compute()
-#master['ancestry.prediction'] = master['ancestry.prediction'].astype('category').compute()
+#master['family_member'] = master['family_member'].astype('category')
+#master['ancestry.prediction'] = master['ancestry.prediction'].astype('category')
 
-# filters
-probands = master.loc[master['family_member'] == 'p1'] # probands
-probands.compute()
+# sample filters
+# probands
+probands = master.loc[master['family_member'] == 'p1']
 
-eur_probands = probands.loc[probands['ancestry.prediction'] == 'EUR'] # of EUR ancestry
-eur_probands.compute()
+# of EUR ancestry
+eur_probands = probands.loc[probands['ancestry.prediction'] == 'EUR']
 
-proband_ids = eur_probands['IID'] # collect IDs
-proband_ids.compute()
+# collect IIDs
+proband_ids = eur_probands['IID']
 
-print proband_ids # does not print
+print proband_ids.head()
 
-"""
-#filter down to medium and and high impact
-voi = variants[variants['impact'].isin(['MED', 'HIGH'])]
+# variant filters
+# medium and and high impact
+med_high = variants[variants['impact'].isin(['MED', 'HIGH'])]
 
-# filter down variants to those in gens of interest
-voi = voi[voi['gene'].isin(genes)]
+# variants to those in gens of interest
+voi = med_high[med_high ['gene'].isin(genes_of_interest)]
 
 # reorganize data frame so that rows are genes of interest, columns are IIDs and value are coutns of variants
+# drop metadata columns that are not needed in output
 voi = voi.drop(voi.columns[0:4], axis = 'columns')
 voi = voi.drop(voi.columns[1:4], axis = 'columns')
+
+# convert back to pandas now that the data frame is small
+voi = voi.compute()
 
 # replace -1 (missing) with 0 in preparation for summing columns
 voi = voi.replace(to_replace = -1, value = 0)
@@ -67,13 +71,12 @@ samples = list(voi)[1:]
 table = {}
 
 # loop through genes, summing the genotypes for each indivudal
-for g in genes:
+for g in genes_of_interest:
 	tmp = voi.loc[voi['gene'] == g ]
 	tmp = tmp.drop(['gene'], axis = 'columns')
 	table[g] = tmp.sum()
-			
+
 # write to file
 out.write('\t'.join(['gene', '\t'.join([str(i) for i in samples])])+'\n')
-for g in genes:
-	out.write('\t'.join([g, '\t'.join([str(i) for i in list(table[g])])+'\n']))probands.compute()
-"""
+for g in genes_of_interest:
+	out.write('\t'.join([g, '\t'.join([str(i) for i in list(table[g])])+'\n']))

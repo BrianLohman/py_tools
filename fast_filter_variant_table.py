@@ -15,7 +15,7 @@ parser.add_argument('-o', '--out', dest = 'out', help = 'output file name')
 args = parser.parse_args()
 
 # read in table of variants
-variants = ddf.read_table(args.variants, blocksize = 500e6) # 500 MB blocks
+variants = ddf.read_table(args.variants, blocksize = 50e6) # 50 MB blocks
 #print variants.head()
 print 'variants read in'
 
@@ -59,6 +59,8 @@ print 'filtered variants'
 
 # convert back to pandas now that the data frame is small
 voi = voi.compute()
+print 'converted back to pandas'
+print voi.shape 
 
 # replace -1 (missing) with 0 in preparation for summing columns
 voi = voi.replace(to_replace = -1, value = 0)

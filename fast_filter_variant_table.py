@@ -3,7 +3,12 @@
 
 # USAGE: python fast_filter_variant_table.py -v [variant table] -g [genes of interest] -o [output name] 
 
+# note that you should consider upgrading to python 3.x from 2.x 
+# stopping development of dask for python 2.x is an ongoing discussion
+# https://github.com/dask/dask/issues/4047
+
 import dask.dataframe as ddf
+from dask.distributed import Client
 import sys
 import argparse
 
@@ -14,20 +19,29 @@ parser.add_argument('-g', '--genes', dest = 'genes', help = 'genes of interest')
 parser.add_argument('-o', '--out', dest = 'out', help = 'output file name')
 args = parser.parse_args()
 
+# if this isn't working for you, see https://distributed.dask.org/en/latest/setup.html
+# or talk to your friendly IT professional
+client = Client()
+client.restart()
+
 # read in table of variants
 variants = ddf.read_table(args.variants, blocksize = 50e6) # 50 MB blocks
 #print variants.head()
 print 'variants read in'
-
-# define out file
-out = open(args.out, "w")
 
 # define list of genes of interest
 with open(args.genes) as g:
 	genes_of_interest = g.read().splitlines()
 
 # make list of EUR proband IDs
-master = ddf.read_table("/scratch/ucgd/lustre/work/u0806040/data/15_Jan_19_Simons_master_ancestry_corrected_PRS.txt", blocksize = 25e6, dtype={'other_dx_axis_i': 'object', 'other_dx_axis_ii': 'object', 'other_dx_icd': 'object'}) # 25 MB blocks
+# I know nothing about this size, but consider passing in an index, which will make operations later on faster
+# if it makes sense for what your trying to do
+# e.g. I imagine indexing by gene might be useful
+# see http://docs.dask.org/en/latest/dataframe-performance.html#use-the-index
+master = ddf.read_table("/scratch/ucgd/lustre/work/u0806040/data/15_Jan_19_Simons_master_ancestry_corrected_PRS.txt",
+            blocksize = 25e6, # I would try leaving this off...dask can figure out the optimal block sizes on its own
+            dtype={'other_dx_axis_i': 'object', 'other_dx_axis_ii': 'object', 'other_dx_icd': 'object'}
+            ) # 25 MB blocks
 
 # text to numeric for speed
 #master['family_member'] = master['family_member'].astype('category')
@@ -82,6 +96,7 @@ for g in genes_of_interest:
 print 'witing to file'
 
 # write to file
-out.write('\t'.join(['gene', '\t'.join([str(i) for i in samples])])+'\n')
-for g in genes_of_interest:
-	out.write('\t'.join([g, '\t'.join([str(i) for i in list(table[g])])+'\n']))
+with open(args.out, "w") as out:
+    out.write('\t'.join(['gene', '\t'.join([str(i) for i in samples])])+'\n')
+    for g in genes_of_interest:
+        out.write('\t'.join([g, '\t'.join([str(i) for i in list(table[g])])+'\n']))

@@ -97,7 +97,6 @@ print 'witing to file'
 
 # write to file
 with open(args.out, "w") as out:
-    out = open(args.out, "w")
     out.write('\t'.join(['gene', '\t'.join([str(i) for i in samples])])+'\n')
     for g in genes_of_interest:
         out.write('\t'.join([g, '\t'.join([str(i) for i in list(table[g])])+'\n']))

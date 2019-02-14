@@ -4,8 +4,12 @@
 # USAGE: python fast_filter_variant_table.py -v [variant table] -g [genes of interest] -o [output name] 
 
 import dask.dataframe as ddf
+from dask.distributed import Client
 import sys
 import argparse
+
+# set up resources for dask
+client = Client()
 
 # define arguments
 parser = argparse.ArgumentParser(description='sum the number of variants per gene in an individual')
@@ -15,12 +19,9 @@ parser.add_argument('-o', '--out', dest = 'out', help = 'output file name')
 args = parser.parse_args()
 
 # read in table of variants
-variants = ddf.read_table(args.variants, blocksize = 50e6) # 50 MB blocks
+variants = ddf.read_table(args.variants, blocksize = 1e9) # 1 GB blocks
 #print variants.head()
 print 'variants read in'
-
-# define out file
-out = open(args.out, "w")
 
 # define list of genes of interest
 with open(args.genes) as g:
@@ -82,6 +83,7 @@ for g in genes_of_interest:
 print 'witing to file'
 
 # write to file
-out.write('\t'.join(['gene', '\t'.join([str(i) for i in samples])])+'\n')
-for g in genes_of_interest:
-	out.write('\t'.join([g, '\t'.join([str(i) for i in list(table[g])])+'\n']))
+with open(args.out, "w") as out:
+	out.write('\t'.join(['gene', '\t'.join([str(i) for i in samples])])+'\n')
+	for g in genes_of_interest:
+		out.write('\t'.join([g, '\t'.join([str(i) for i in list(table[g])])+'\n']))

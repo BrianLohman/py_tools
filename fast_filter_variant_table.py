@@ -52,6 +52,12 @@ variants.drop(variants.columns[1:4], axis = 'columns')
 print 'computing and returing pandas data frame'
 voi = variants.compute()
 
+## ERRORS GALORE
+#distributed.worker - WARNING - gc.collect() took 1.651s. This is usually a sign that the some tasks handle too many Python objects at the same time. Rechunking the work into smaller tasks might help.
+#distributed.worker - WARNING - Worker is at 103% memory usage. Pausing worker.  Process memory: 5.05 GB -- Worker memory limit: 4.80 GB
+
+# MEMORY USAGE CLIMBS OVER TIME
+
 # replace -1 (missing) with 0 in preparation for summing columns
 voi.replace(to_replace = -1, value = 0, inplace = True)
 

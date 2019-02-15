@@ -8,8 +8,9 @@ from dask.distributed import Client
 import sys
 import argparse
 
-# set up resources for dask
-client = Client()
+# set up resources for dask: 32 workers, each 1 thread
+# this works on kingspeak31 which has many more threads than cores, so we need to account for that
+client = Client(processes = False, n_workers = 32, threads_per_worker = 1)
 
 # define arguments
 parser = argparse.ArgumentParser(description='sum the number of variants per gene in an individual')
@@ -19,16 +20,22 @@ parser.add_argument('-o', '--out', dest = 'out', help = 'output file name')
 args = parser.parse_args()
 
 # read in table of variants
-variants = ddf.read_table(args.variants, blocksize = 1e9) # 1 GB blocks
+variants = ddf.read_table(args.variants)
 #print variants.head()
 print 'variants read in'
 
+# TESTING: sending simple pandas task to the client and then quit
+x = variants.impact.value_counts()
+x.compute()
+print x.head() 
+sys.exit(1)
+"""
 # define list of genes of interest
 with open(args.genes) as g:
 	genes_of_interest = g.read().splitlines()
 
 # make list of EUR proband IDs
-master = ddf.read_table("/scratch/ucgd/lustre/work/u0806040/data/15_Jan_19_Simons_master_ancestry_corrected_PRS.txt", blocksize = 25e6, dtype={'other_dx_axis_i': 'object', 'other_dx_axis_ii': 'object', 'other_dx_icd': 'object'}) # 25 MB blocks
+master = ddf.read_table("/scratch/ucgd/lustre/work/u0806040/data/15_Jan_19_Simons_master_ancestry_corrected_PRS.txt", blocksize = 25e6, dtype={'other_dx_axis_i': 'object', 'other_dx_axis_ii': 'object', 'other_dx_icd': 'object'})
 
 # text to numeric for speed
 #master['family_member'] = master['family_member'].astype('category')
@@ -87,3 +94,4 @@ with open(args.out, "w") as out:
 	out.write('\t'.join(['gene', '\t'.join([str(i) for i in samples])])+'\n')
 	for g in genes_of_interest:
 		out.write('\t'.join([g, '\t'.join([str(i) for i in list(table[g])])+'\n']))
+"""

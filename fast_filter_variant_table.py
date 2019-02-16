@@ -11,9 +11,8 @@ import pandas
 
 # set up resources for dask: 32 workers, each 1 thread
 # this works on kingspeak31 which has many more threads than cores, so we need to account for that
-client = Client(processes = False, n_workers = 32, threads_per_worker = 1, memory_limit = '4.8GB')
-print client
-
+#client = Client(processes = False, n_workers = 32, threads_per_worker = 1, memory_limit = '4.8GB')
+client = Client(processes = False)
 # define arguments
 parser = argparse.ArgumentParser(description='sum the number of variants per gene in an individual')
 parser.add_argument('-v', '--variants', dest = 'variants', help = 'variant table')
@@ -39,14 +38,14 @@ variants = ddf.read_table(args.variants)
 # filter variants
 print 'setting up variant filters'
 # medium and and high impact
-variants[variants.impact.isin(['MED', 'HIGH'])]
+variants1 = variants[variants.impact.isin(['MED', 'HIGH'])]
 
 # in gens of interest
-variants[variants.gene.isin(genes_of_interest)]
+variants2 = variants1[variants1.gene.isin(genes_of_interest)]
 
 # convert back to pandas now that the data frame is small
 print 'computing and returing pandas data frame'
-voi = variants.compute(scheduler = client)
+voi = variants2.compute(scheduler = client)
 
 # reorganize data frame so that rows are genes of interest, columns are IIDs and value are coutns of variants
 # drop metadata columns that are not needed in output

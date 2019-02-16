@@ -12,6 +12,7 @@ import pandas
 # set up resources for dask: 32 workers, each 1 thread
 # this works on kingspeak31 which has many more threads than cores, so we need to account for that
 client = Client(processes = False, n_workers = 32, threads_per_worker = 1, memory_limit = '4.8GB')
+print client
 
 # define arguments
 parser = argparse.ArgumentParser(description='sum the number of variants per gene in an individual')
@@ -43,14 +44,14 @@ variants[variants.impact.isin(['MED', 'HIGH'])]
 # in gens of interest
 variants[variants.gene.isin(genes_of_interest)]
 
-# reorganize data frame so that rows are genes of interest, columns are IIDs and value are coutns of variants
-# drop metadata columns that are not needed in output
-variants.drop(variants.columns[0:4], axis = 'columns')
-variants.drop(variants.columns[1:4], axis = 'columns')
-
 # convert back to pandas now that the data frame is small
 print 'computing and returing pandas data frame'
-voi = variants.compute()
+voi = variants.compute(scheduler = client)
+
+# reorganize data frame so that rows are genes of interest, columns are IIDs and value are coutns of variants
+# drop metadata columns that are not needed in output
+voi = voi.drop(voi.columns[0:4], axis = 'columns')
+voi = voi.drop(voi.columns[1:4], axis = 'columns')
 
 ## ERRORS GALORE
 #distributed.worker - WARNING - gc.collect() took 1.651s. This is usually a sign that the some tasks handle too many Python objects at the same time. Rechunking the work into smaller tasks might help.
@@ -59,7 +60,7 @@ voi = variants.compute()
 # MEMORY USAGE CLIMBS OVER TIME
 
 # replace -1 (missing) with 0 in preparation for summing columns
-voi.replace(to_replace = -1, value = 0, inplace = True)
+voi = voi.replace(to_replace = -1, value = 0)
 
 # make list of samples
 samples = list(voi)[1:]

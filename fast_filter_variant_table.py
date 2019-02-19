@@ -9,10 +9,9 @@ import sys
 import argparse
 import pandas
 
-# set up resources for dask: 32 workers, each 1 thread
-# this works on kingspeak31 which has many more threads than cores, so we need to account for that
-#client = Client(processes = False, n_workers = 32, threads_per_worker = 1, memory_limit = '4.8GB')
-client = Client(processes = False)
+# this works on AWS
+client = Client()
+
 # define arguments
 parser = argparse.ArgumentParser(description='sum the number of variants per gene in an individual')
 parser.add_argument('-v', '--variants', dest = 'variants', help = 'variant table')
@@ -45,18 +44,12 @@ variants2 = variants1[variants1.gene.isin(genes_of_interest)]
 
 # convert back to pandas now that the data frame is small
 print 'computing and returing pandas data frame'
-voi = variants2.compute(scheduler = client)
+voi = variants2.compute()
 
 # reorganize data frame so that rows are genes of interest, columns are IIDs and value are coutns of variants
 # drop metadata columns that are not needed in output
 voi = voi.drop(voi.columns[0:4], axis = 'columns')
 voi = voi.drop(voi.columns[1:4], axis = 'columns')
-
-## ERRORS GALORE
-#distributed.worker - WARNING - gc.collect() took 1.651s. This is usually a sign that the some tasks handle too many Python objects at the same time. Rechunking the work into smaller tasks might help.
-#distributed.worker - WARNING - Worker is at 103% memory usage. Pausing worker.  Process memory: 5.05 GB -- Worker memory limit: 4.80 GB
-
-# MEMORY USAGE CLIMBS OVER TIME
 
 # replace -1 (missing) with 0 in preparation for summing columns
 voi = voi.replace(to_replace = -1, value = 0)

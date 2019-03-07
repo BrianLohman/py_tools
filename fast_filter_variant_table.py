@@ -10,7 +10,7 @@ import argparse
 import pandas
 
 # this works on AWS
-client = Client()
+client = Client()  # client = Client(processes = False) for local machines
 
 # define arguments
 parser = argparse.ArgumentParser(description='sum the number of variants per gene in an individual')

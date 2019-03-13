@@ -30,12 +30,12 @@ eur_probands = probands.loc[probands['ancestry.prediction'] == 'EUR']
 proband_ids = eur_probands['IID']
 
 # read in table of variants
-print 'reading in variants'
+print('reading in variants')
 variants = ddf.read_table(args.variants)
 #print variants.head()
 
 # filter variants
-print 'setting up variant filters'
+print('setting up variant filters')
 # medium and and high impact
 variants1 = variants[variants.impact.isin(['MED', 'HIGH'])]
 
@@ -43,7 +43,7 @@ variants1 = variants[variants.impact.isin(['MED', 'HIGH'])]
 variants2 = variants1[variants1.gene.isin(genes_of_interest)]
 
 # convert back to pandas now that the data frame is small
-print 'computing and returing pandas data frame'
+print('computing and returing pandas data frame')
 voi = variants2.compute()
 
 # reorganize data frame so that rows are genes of interest, columns are IIDs and value are coutns of variants
@@ -60,7 +60,7 @@ samples = list(voi)[1:]
 # empty table for gene and sums by individusl
 table = {}
 
-print 'summing variants per gene for each sample'
+print('summing variants per gene for each sample')
 
 # loop through genes, summing the genotypes for each indivudal
 for g in genes_of_interest:
@@ -68,7 +68,7 @@ for g in genes_of_interest:
 	tmp = tmp.drop(['gene'], axis = 'columns')
 	table[g] = tmp.sum()
 
-print 'witing to file'
+print('witing to file')
 
 # write to file
 with open(args.out, "w") as out:

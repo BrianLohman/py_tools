@@ -61,16 +61,16 @@ probands = master.loc[master['family_member'] == 'p1']
 probands = probands.loc[probands['ancestry.prediction'] == 'EUR']
 probands = probands.drop(probands.columns[0:122], axis = 'columns')
 
-print probands.shape
+print(str(probands.shape))
 
 # randomly split half
 x = np.random.rand(len(probands)) < 0.5
 
 half_1 = probands[x]
-print str(len(half_1)) + " probands in first half"
+print(str(len(half_1)) + " probands in first half")
 
 half_2 = probands[~x]
-print str(len(half_2)) + " probands in second half"
+print(str(len(half_2)) + " probands in second half")
 
 # FIRST HALF
 # assign bins

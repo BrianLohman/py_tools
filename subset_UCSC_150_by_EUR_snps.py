@@ -31,4 +31,4 @@ for line in open(sys.argv[2]):
     found.add(fields[3])
 
 for k, l in keep.iteritems():
-    print l,
+    print(l),

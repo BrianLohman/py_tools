@@ -21,35 +21,31 @@ args = parser.parse_args()
 # glob in files
 report_list = glob.glob(args.dir+'/*_kraken2_report.txt')
 
-# empty data frame for results
-master = pandas.DataFrame()
-
+samples = []
 # loop through kraken2 reports
 for report in report_list:
+	print(report)
+	
 	# get sample ID from filename
-	sample = report.split('_')[0]
-	sample = sample.split('/')[-1]
+	sample_name = report.split('_')[-3]
+	sample_name = sample_name.split('/')[-1]
 	
 	# read in as pandas dataframe
-	df = pandas.read_csv(report, sep="\t")
-	df.columns = ["percent_total", "reads", "taxon_reads", "taxon", "NCBI_taxon_ID","name"]
+	sample = pandas.read_csv(report, sep="\t")
+	sample.columns = ["percent_total", "reads", "taxon_reads", "taxon", "NCBI_taxon_ID","name"]
 	
 	# strip white space from name columns
-	df.name = df.name.str.strip()
+	sample.name = sample.name.str.strip()
 	
-	# set name as index
-	df = df.set_index(df.name)
-	
-	# keep only the reads as smaller data frame
-	df = df['reads']
-	df = pandas.DataFrame(df)
-	df.columns = [sample]
+	# drop undesired columns
+	sample = sample[['name','reads']]	
+	sample.columns = ['name', sample_name]
 
-	# merge each report with the prior	
-	master = pandas.merge(master, df, how = 'outer', right_index = True, left_index = True)
+	# append current sample to list of samples
+	samples.append(sample)
 
-	# replace NaN with 0
-	master = master.fillna(value = 0)
+# concat
+master = pandas.concat(samples).groupby('name', as_index = False, sort = False).first().set_index('name').fillna('0')
 
 # print to file
 master.to_csv(args.out, sep = "\t")

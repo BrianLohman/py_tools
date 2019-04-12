@@ -14,7 +14,7 @@ parser.add_argument('-n', '--sample_size', dest = 'n', help = 'number of individ
 parser.add_argument('-o', '--result', dest = 'o', help = 'name of file contaning results')
 parser.add_arugment('-p', '--prs', dest = 'prs', help = 'PRS or other column to generate groups')
 parser.add_argument('-q', '--quartile', dest = 'q', help = 'quartile (or other such -ile), either "lower" or "upper"')
-arg = parser.parse_args()
+args = parser.parse_args()
 
 # Read in Simons data
 master = pandas.read_table('15_Jan_19_Simons_master_ancestry_corrected_PRS.txt')
@@ -28,9 +28,9 @@ variants = pandas.read_table('med_high_GATK_variants.txt')
 prs = probands.sort_values(by=args.prs+"_ancestry_resid")
 
 # select quartile of interest and get IDs
-if args.q = "lower":
+if args.q == "lower":
 	sample = prs.head(int(args.n)).simons_id
-if args.q = "upper":
+if args.q == "upper":
 	sample = prs.tail(int(args.n)).simons_id
 
 # Select variants from those probands

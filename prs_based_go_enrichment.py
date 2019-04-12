@@ -94,6 +94,7 @@ df = df[df['FDR'] < 0.05]
 if df.shape[0] == 0:
         print("No significant enrichment")
 
-# Sort by FDR and print to file
-df = df.sort_values(by=['FDR'])
-df.to_csv(args.o, index = False, sep = '\t')
+else:
+	# Sort by FDR and print to file
+	df = df.sort_values(by=['FDR'])
+	df.to_csv(args.o, index = False, sep = '\t')

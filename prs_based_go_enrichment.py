@@ -90,6 +90,10 @@ df.FDR = df.FDR.astype(float)
 # Only significant after FDR correction
 df = df[df['FDR'] < 0.05]
 
+# check to see if anything is left                                                                         .
+if df.shape[0] == 0:
+        print("No significant enrichment")
+
 # Sort by FDR and print to file
 df = df.sort_values(by=['FDR'])
 df.to_csv(args.o, index = False, sep = '\t')

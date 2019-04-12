@@ -1,4 +1,6 @@
-# SUbmit a request to the Panther database for GO enrichment
+#!/usr/bin/env python
+
+# Submit a request to the Panther database for GO enrichment
 import pandas
 import requests
 from collections import defaultdict

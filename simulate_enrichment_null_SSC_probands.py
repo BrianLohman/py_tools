@@ -5,6 +5,7 @@ import random
 import requests
 from collections import defaultdict
 from collections import Counter
+import statistics as stats
 
 # Read in Simons data
 master = pandas.read_table('15_Jan_19_Simons_master_ancestry_corrected_PRS.txt')
@@ -16,11 +17,10 @@ variants = pandas.read_table('med_high_GATK_variants.txt')
 
 # Make space to store GO terms during the loop
 all_go_terms = []
+d = {}
 
-for i in range(1,101):
-    #f_out = open('randomized_probands_'+str(i)+'.txt', 'w')
+for i in range(1,1001):
     sample = random.sample(proband_ids, 413)
-    #print(len(sample))
 
     # Select randomly sampled probands
     variants_of_interest = variants.loc[variants.SampleID.isin(sample)]
@@ -71,31 +71,27 @@ for i in range(1,101):
     
     # convert FDR to float
     df.FDR = df.FDR.astype(float)
-    
-    #print(df.dtypes)
-
-    # only significant after FDR correction
-    df = df[df['FDR'] < 0.05]
-
-    # Sort by FDR and print to file
-    #df.sort_values(by=['FDR']).to_csv(f_out, index = False, sep = '\t')
-    
+   
+    # drop gene name and remove duplicates
+    df = df.drop('GeneId', axis = 1)
+    df = df.drop_duplicates()
+ 
     # list of uniq GO groups
     uniq_go = list(set(df.Name))
     all_go_terms.extend(uniq_go)
-    
-# count the number of times each GO term appears in the master list
-uniq_counts = list(Counter(all_go_terms).items())
 
-# convert to dict
-d = {}
-for item in uniq_counts:
-    d[item[0]] = item[1]
+    # build dictionary of go name and FDR
+    for g in uniq_go:
+        if g in d:
+            d[g] = d[g].append(df[df.Name == g].FDR)
+        else:
+            d[g] = df[df.Name == g].FDR
 
-# convert to data frame
-d_out = pandas.DataFrame.from_dict(d, orient = 'index')
-d_out.columns = ['count']
+# gather results
+out = open('1000_simulations_GO_mean_sd.txt', 'w')
 
-# write to file, sorted by count
-d_out.sort_values(by=['count'], ascending = False).to_csv('randomized_probands_GO_BP_counts.txt', sep = '\t', header = False)
-
+for k in all_go_terms:
+    if len(d[k]) <= 1:
+        print('\t'.join([k, str(stats.mean(d[k])), 'NA']), file = out)
+    else:
+        print('\t'.join([k, str(stats.mean(d[k])), str(stats.stdev(d[k]))]), file = out)

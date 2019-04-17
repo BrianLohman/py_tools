@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 # Simulate the expected functional enrichment (GO BP) of the average proband in SSC
 
 import pandas
@@ -16,7 +18,6 @@ proband_ids = list(probands.simons_id)
 variants = pandas.read_table('med_high_GATK_variants.txt')
 
 # Make space to store GO terms during the loop
-all_go_terms = []
 d = {}
 
 for i in range(1,1001):
@@ -78,7 +79,6 @@ for i in range(1,1001):
  
     # list of uniq GO groups
     uniq_go = list(set(df.Name))
-    all_go_terms.extend(uniq_go)
 
     # build dictionary of go name and FDR
     for g in uniq_go:
@@ -90,8 +90,8 @@ for i in range(1,1001):
 # gather results
 out = open('1000_simulations_GO_mean_sd.txt', 'w')
 
-for k in all_go_terms:
-    if len(d[k]) <= 1:
-        print('\t'.join([k, str(stats.mean(d[k])), 'NA']), file = out)
+for key, values in d.items():
+    if len(values) <= 1:
+        print('\t'.join([key, str(stats.mean(values)), 'NA']), file = out)
     else:
-        print('\t'.join([k, str(stats.mean(d[k])), str(stats.stdev(d[k]))]), file = out)
+        print('\t'.join([key, str(stats.mean(values)), str(stats.stdev(values))]), file = out)

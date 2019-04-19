@@ -21,6 +21,7 @@ for chrom, start, end, ref, alt, sample,  in (line.strip().split('\t') for line 
         print(str(k) + ' variants screened', file = sys.stderr)
     
     if ref == 'C':
+        assert(ref == fa[chrom][int(start)])
         three_prime_base = fa[chrom][int(end)]
         if three_prime_base == 'G':
             print(chrom, start, end, ref, alt, sample, sep = '\t', file = cpg_bed)
@@ -28,6 +29,7 @@ for chrom, start, end, ref, alt, sample,  in (line.strip().split('\t') for line 
             continue
 
     if ref == 'G':
+        assert(ref == fa[chrom][int(start)])
         three_prime_base = fa[chrom][int(start) - 1]
         if three_prime_base == 'C':
             print(chrom, start, end, ref, alt, sample, sep = '\t', file = cpg_bed)

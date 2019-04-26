@@ -27,9 +27,9 @@ for line in contents:
     if re.match('^\s*#', stripped_line):
         continue
     if not stripped_line:
-	continue
+        continue
     else:
-	n_commands += 1
+        n_commands += 1
 
 # loop though commands, printing lines from the commands file at the bottom of the standard header
 # while accounting for tasks per node constraints
@@ -41,33 +41,33 @@ for line in open(args.commands):
         job_fh = args.job + "_" + str(line_count)
         o = open(job_fh + ".job", "w")
         o.write('\n'.join(["#!/bin/bash", "#SBATCH --time="+args.time, "#SBATCH --account=quinlan-rw", "#SBATCH --partition="+args.partition, "#SBATCH --nodes=1", "#SBATCH --ntasks="+str(args.ntasks), "#SBATCH --mem="+str(args.mem), "#SBATCH --job-name="+job_fh, "#SBATCH -o call-"+job_fh+".out", "#SBATCH -e call-"+job_fh+".err", '\n', str(line)]))
-	# if there is only one command to run
-	if line_count == n_commands:
+    # if there is only one command to run
+        if line_count == n_commands:
             o.close()
-	    os.system("sbatch "+job_fh+".job")
-	    break
+            os.system("sbatch "+job_fh+".job")
+            break
 
-	else:
+        else:
             line_count += 1
-	    continue
+            continue
     
     else:
         if line_count == n_commands:
-	    o.write(str(line))
-	    o.close()
+            o.write(str(line))
+            o.close()
             os.system("sbatch "+job_fh+".job")
-	    break
-	
+            break
+    
         if line_count % int(args.ntasks) != 0:
-	    o.write(str(line))
+            o.write(str(line))
             line_count += 1
             continue
 
-	if line_count % int(args.ntasks) == 0: 
-	    o.write(str(line))
-	    o.close()
-            os.system("sbatch "+job_fh+".job")
-	    job_fh = None
-	    line_count += 1
-	    continue
+    if line_count % int(args.ntasks) == 0: 
+        o.write(str(line))
+        o.close()
+        os.system("sbatch "+job_fh+".job")
+        job_fh = None
+        line_count += 1
+        continue
 

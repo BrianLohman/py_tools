@@ -14,7 +14,7 @@ parser.add_argument('-n','--job-name', dest='job', help = 'job base name')
 parser.add_argument('-c', '--commands', dest='commands', help = 'list of commands to run, one per line')
 parser.add_argument('-w', '--ntasks-node', dest='ntasks', default = 8, help = 'number of tasks per node')
 parser.add_argument('-m', '--mem', dest='mem', default = 128000, help = 'minimum memory required per node')
-parser.add_argument('-p', '--partition', dest = 'partition', default = "quinlan-shared-kp", help = 'quinlan-kp/quinlan-shared-kp')
+parser.add_argument('-p', '--partition', dest = 'partition', default = "quinlan-shared-rw", help = 'quinlan-rw/quinlan-shared-rw')
 parser.add_argument('-t', '--time', dest='time', default = "12:00:00", type = str, help = 'max run time')
 args = parser.parse_args()
 
@@ -40,7 +40,7 @@ for line in open(args.commands):
     if job_fh == None:
         job_fh = args.job + "_" + str(line_count)
         o = open(job_fh + ".job", "w")
-        o.write('\n'.join(["#!/bin/bash", "#SBATCH --time="+args.time, "#SBATCH --account=quinlan-kp", "#SBATCH --partition="+args.partition, "#SBATCH --nodes=1", "#SBATCH --ntasks="+str(args.ntasks), "#SBATCH --mem="+str(args.mem), "#SBATCH --job-name="+job_fh, "#SBATCH -o call-"+job_fh+".out", "#SBATCH -e call-"+job_fh+".err", '\n', str(line)]))
+        o.write('\n'.join(["#!/bin/bash", "#SBATCH --time="+args.time, "#SBATCH --account=quinlan-rw", "#SBATCH --partition="+args.partition, "#SBATCH --nodes=1", "#SBATCH --ntasks="+str(args.ntasks), "#SBATCH --mem="+str(args.mem), "#SBATCH --job-name="+job_fh, "#SBATCH -o call-"+job_fh+".out", "#SBATCH -e call-"+job_fh+".err", '\n', str(line)]))
 	# if there is only one command to run
 	if line_count == n_commands:
             o.close()

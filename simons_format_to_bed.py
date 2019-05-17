@@ -18,16 +18,16 @@ with open(sys.argv[1], 'r') as simons:
 	for ID, SampleID, Batch, Allele, Consequence, Impact, Symbol  in (line.strip("\r\n").split('\t') for line in simons):
 		if ID == 'ID':
 			continue
-		#if Batch != 'P231':
-		#	continue
+		if Batch != 'P231':
+			continue
 		chrom, end, ref, alt = ID.split(':')
 		start = int(end) - len(ref)
 		
-		#if SampleID in d:
-		print(chrom, start, end, ref, alt, SampleID,  sep = '\t', file = out)
-		#else:
-		#	problem_samples.append(SampleID)
-		#	continue
+		if SampleID in d:
+		    print(chrom, start, end, ref, alt, SampleID,  sep = '\t', file = out)
+		else:
+			problem_samples.append(SampleID)
+			continue
 			#print(chrom, start, end, ref, alt, SampleID,  sep = '\t', file = out)
 
 print(set(problem_samples))

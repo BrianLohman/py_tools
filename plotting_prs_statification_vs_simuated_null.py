@@ -13,9 +13,9 @@ get_ipython().run_line_magic('load_ext', 'rpy2.ipython')
 init_notebook_mode(connected=True)
 
 # define input files
-simulated_qvals_fh = "test_topGO_10K_raw_qvals.txt"
-simulated_sample_dict_fh = "test_topGO_10K_sample_dict.txt"
-simulated_gene_dict_fh = "test_topGO_10K_gene_table.txt"
+simulated_qvals_fh = "../topGO_10K_raw_qvals.txt"
+simulated_sample_dict_fh = "../topGO_10K_sample_dict.txt"
+simulated_gene_dict_fh = "../topGO_10K_gene_table.txt"
 observed_data_fh = '../first_EA_p1_data.txt'
 observed_genes_fh = '../first_EA_p1_gene_list.txt'
 observed_samples_fh = '../first_EA_p1_sample_list.txt'
@@ -224,14 +224,14 @@ for i in outlier_genes.index.values:
 outlier_samples.to_csv("test_outlier_samples.txt", sep = "\t", index = False)
 outlier_genes.to_csv("test_outlier_genes.txt", sep = "\t", index = True)
 
-get_ipython().run_cell_magic('R', '', '## plot venn diagaram of overlap among samples in groups\n\n# suppress venn.diagram logging\nfutile.logger::flog.threshold(futile.logger::ERROR, name = "VennDiagramLogger")\n\n# sample overlap\nlibrary(VennDiagram)\noutlier_samples = read.table("test_outlier_samples.txt", header = TRUE)\nhead(outlier_samples)\n\nx = list()\nfor(i in 1:ncol(outlier_samples)){\n    x[[i]] = outlier_samples[,i]\n}\n\nvenn.diagram(x, \n    category.names = colnames(outlier_samples),\n    filename = "test_samples.jpeg",\n    output = TRUE,\n    cex = 0.75,\n    cat.cex = 0.5\n)')
+get_ipython().run_cell_magic('R', '', '## plot venn diagaram of overlap among samples in groups\n# sample overlap\nlibrary(limma)\noutlier_samples = read.table("test_outlier_samples.txt", header = TRUE)\nhead(outlier_samples)\n\nx = outlier_samples\n\ny = c()\nfor(i in 1:ncol(x)){\n  y = c(y, as.character(x[,i]))\n}\n\ns = unique(y)\n\n# new data frame\nz = data.frame(matrix(nrow = length(s), ncol = ncol(x)))\ncolnames(z) = colnames(x)\nrow.names(z) = s\n\nfor(i in 1:ncol(z)){\n  for(j in 1:nrow(z)){\n    if(row.names(z)[j] %in% as.character(x[,i])){\n      z[j,i] = 1\n    } \n    else {\n      z[j,i] = 0\n    }\n  }\n}\n\njpeg("test_samples.jpg")\nvennDiagram(z)\ndev.off()\n\n# suppress venn.diagram logging\n#futile.logger::flog.threshold(futile.logger::ERROR, name = "VennDiagramLogger")\n\n#library(VennDiagram)\n#x = list()\n#for(i in 1:ncol(outlier_samples)){\n#    x[[i]] = outlier_samples[,i]\n#}\n\n#venn.diagram(x, \n#    category.names = colnames(outlier_samples),\n#    filename = "test_samples.jpg",\n#    output = TRUE,\n#    cex = 0.75,\n#    cat.cex = 0.5,\n#    height = 1000,\n#    width = 1000,\n#    resolution = 300\n#)')
 
-get_ipython().run_cell_magic('R', '', '## plot venn diagram of overlap among genes in groups\n\n# suppress venn.diagram logging\nfutile.logger::flog.threshold(futile.logger::ERROR, name = "VennDiagramLogger")\n\n# gene overlap\nlibrary(VennDiagram)\noutlier_genes = read.table("test_outlier_genes.txt", header = TRUE)\n\nx = list()\nfor(i in 1:ncol(outlier_genes)){\n    y = c()\n    for(j in 1:nrow(outlier_genes)){\n        if(outlier_genes[j,i] == 0){\n            next\n        }\n        else {\n            y = c(y, row.names(outlier_genes)[j])\n        }\n    }\n    x[[i]] = y    \n}\n\nvenn.diagram(x,\n    category.names = colnames(outlier_samples),\n    filename = "test_genes.png",\n    cex = 0.75,\n    cat.cex = 0.5\n)')
+get_ipython().run_cell_magic('R', '', '## plot venn diagram of overlap among genes in groups\n# gene overlap\noutlier_genes = read.table("test_outlier_genes.txt", header = TRUE)\n\njpeg("test_genes.jpg")\nvennDiagram(outlier_genes)\ndev.off()\n\n# suppress venn.diagram logging\n#futile.logger::flog.threshold(futile.logger::ERROR, name = "VennDiagramLogger")\n\n#library(VennDiagram)\n#x = list()\n#for(i in 1:ncol(outlier_genes)){\n#    y = c()\n#    for(j in 1:nrow(outlier_genes)){\n#        if(outlier_genes[j,i] == 0){\n#            next\n#        }\n#        else {\n#            y = c(y, row.names(outlier_genes)[j])\n#        }\n#    }\n#    x[[i]] = y    \n#}\n\n#venn.diagram(x,\n#    category.names = colnames(outlier_samples),\n#    filename = "test_genes.jpg",\n#    cex = 0.75,\n#    cat.cex = 0.5,\n#    height = 1000,\n#    width = 1000,\n#    resolution = 300\n#)')
 
 ## package the results
 # base64 encode images
-samples_img = base64.b64encode(open("test_samples.png", "rb").read()).decode('utf-8')
-genes_img = base64.b64encode(open("test_genes.png", "rb").read()).decode('utf-8')
+samples_img = base64.b64encode(open("test_samples.jpg", "rb").read()).decode('utf-8')
+genes_img = base64.b64encode(open("test_genes.jpg", "rb").read()).decode('utf-8')
 
 # build an html string that contains the plots above
 html_string = '''
@@ -273,12 +273,12 @@ html_string = '''
 
         <!-- *** Section 5 *** --->
         <h2>Venn diagram of sample overlap</h2>
-        <img src = "data;image/png;base64,'''+samples_img+'''", alt = "genes venn", width = "400", height = "400" >
+        <img src="data:image/jpg;base64,'''+samples_img+'''", alt = "genes venn", width = "400", height = "400" >
         <p>Sample overlap between observed (red line in histogram) and simulations greater than this value.</p>
 
         <!-- *** Section 6 *** --->
         <h2>Venn diagram of gene overlap</h2>
-        <img src = "data;image/png;base64,'''+genes_img+'''", alt = "genes venn", width = "400", height = "400" >
+        <img src="data:image/png;base64,'''+genes_img+'''", alt = "genes venn", width = "400", height = "400" >
         <p>Sample overlap between genes used in observed (red line in histogram) and genes used in simulations \
         greater than this value.</p>
 
@@ -286,6 +286,6 @@ html_string = '''
 </html>'''
 
 # write to file
-f = open('./test_report.html','w')
+f = open('./Q1_EA_P1_report.html','w')
 f.write(html_string)
 f.close()

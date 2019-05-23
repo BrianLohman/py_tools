@@ -14,13 +14,15 @@ import numpy as np
 # In[2]:
 
 
-# define input files
-simulated_qvals_fh = "test_topGO_10K_raw_qvals.txt"
-simulated_sample_dict_fh = "test_topGO_10K_sample_dict.txt"
-simulated_gene_dict_fh = "test_topGO_10K_gene_table.txt"
+# define input and output files
+simulated_qvals_fh = "../topGO_10K_raw_qvals.txt"
+simulated_sample_dict_fh = "../topGO_10K_sample_dict.txt"
+simulated_gene_dict_fh = "../topGO_10K_gene_table.txt"
 observed_data_fh = '../first_EA_p1_data.txt'
 observed_genes_fh = '../first_EA_p1_gene_list.txt'
 observed_samples_fh = '../first_EA_p1_sample_list.txt'
+
+report = "Q1_EA_P1_report.html"
 
 
 # In[3]:
@@ -244,6 +246,7 @@ for i in outlier_genes.index.values:
         continue
 
 outlier_genes['Total_Observations'] = outlier_genes.sum(axis = 1)
+outlier_genes = outlier_genes[outlier_genes.columns[::-1]]
 #print(outlier_genes.head())
 
 # convert to list of lists (where each list is a row) for jquery
@@ -292,6 +295,7 @@ sample_table['Total_Observations'] = sample_table.sum(axis = 1)
 sample_table = sample_table.set_index(sample_table.sample_id)
 sample_table.drop('sample_id', inplace = True, axis = 1)
 sample_table = sample_table.astype(int)
+sample_table = sample_table[sample_table.columns[::-1]]
 #print(sample_table.head())
 
 # convert to list of lists (where each list is a row) for jquery
@@ -413,7 +417,7 @@ html = html.replace("[PVAL_DIV]", str(enrichment_by_pval_div))
 html = html.replace("[SIZE_DIV]", str(enrichment_by_size_div))
 html = html.replace("[HIST_DIV]", str(hist_div))
 
-f = open("test_table.html", "w")
+f = open(report, "w")
 f.write(html)
 f.close()
 

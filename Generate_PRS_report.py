@@ -9,9 +9,6 @@ import pandas as pd
 import plotly.plotly as py
 import plotly.graph_objs as go
 import numpy as np
-import rpy2
-import base64
-import json
 
 
 # In[2]:
@@ -97,7 +94,6 @@ layout = dict(title = 'PRS stratification vs proband ascertainment bias',
               xaxis = dict(title = 'GO Term',ticks='',showticklabels=False)
 )
 
-
 fig = dict(data=data, layout=layout)
 stick_plot_div = plot(fig, validate = False, include_plotlyjs=False, output_type='div')
 
@@ -135,7 +131,6 @@ layout = dict(title = 'Fold enrichment vs -log(p-value)',
 
 fig = dict(data=data, layout=layout)
 
-#iplot(fig, validate = False)
 enrichment_by_pval_div = plot(fig, validate = False, include_plotlyjs=False, output_type='div')
 
 
@@ -172,7 +167,6 @@ layout = dict(title = 'Fold enrichment vs GO term size',
 
 fig = dict(data=data, layout=layout)
 
-#iplot(fig, validate = False)
 enrichment_by_size_div = plot(fig, validate = False, include_plotlyjs=False, output_type='div')
 
 
@@ -201,14 +195,14 @@ layout = {'title': go_dict[test_go_term],
         'x0':observed_df.loc[observed_df.GO_term == test_go_term].nlog_q_val.values[0], 
         'y0':0,
         'x1':observed_df.loc[observed_df.GO_term == test_go_term].nlog_q_val.values[0],
-        'y1':25,
+        'y1':1,
+        'yref': "paper",
         'line':{'color':'red','width': 3}
     }]
 }
 
 fig = dict(data=data, layout=layout)
 
-#iplot(fig, validate = False)
 hist_div = plot(fig, validate = False, include_plotlyjs=False, output_type='div')
 
 
@@ -301,7 +295,7 @@ sample_table = sample_table.astype(int)
 #print(sample_table.head())
 
 # convert to list of lists (where each list is a row) for jquery
-sample_header = ['gene']
+sample_header = ['sample']
 sample_header.extend(outlier_genes.columns)
 
 #print(header)
@@ -315,8 +309,6 @@ for i in range(len(outlier_samples.index)):
     tmp = [str(x) for x in tmp]
     sample_lists.append(tmp)
 
-#print(sample_lists)
-
 
 # In[10]:
 
@@ -329,7 +321,7 @@ TEMPLATE = '''
         <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.js"></script>
         <script type="text/javascript" src="https://cdn.datatables.net/v/bs4/dt-1.10.18/sl-1.3.0/datatables.min.js"></script>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
-        <style>body{ margin:0 100; background:whitesmoke; }</style>
+        <style>body{ margin:0 100; background:white; }</style>
     </head>
     
     <body>
@@ -361,9 +353,14 @@ TEMPLATE = '''
 
         <!-- *** Section 5 *** --->
         <h2>Genes in simulated and observed groups</h2>
-        <table id="gene_table" class="table table-hover pb-3 display nowrap" width="100%"></table>
+        <p>Cells indicate presence (1) or absence (0) of a gene in a group. Click colums to sort. \
+        Genes present in all groups may represent a core set of genes driving GO enrichment \
+        (Sort based on Total Observations). Control + click to sort based on second category. </p>
+        <table id="gene_table" class="table table-hover table-dark pb-3 display nowrap" width="100%"></table>
         
         <h2>Samples in simulated and observed groups</h2>
+        <p>Cells indicate presence (1) or absence (0) of a sample in a group. Click colums to sort. \
+         Control + click to sort based on second category.</p>
         <table id="sample_table" class="table table-hover pb-3 display nowrap" width="100%"></table>
 
     </body>
@@ -375,7 +372,7 @@ const build_table = () => {
     var gene_table = $("#gene_table").DataTable({
         data: gene_data,
         columns: [GENE_HEADER], 
-        scrollY: '600px',
+        // scrollY: '600px',
         scrollX: true,
         scrollCollapse: true,
         paging: true,
@@ -385,7 +382,7 @@ const build_table = () => {
     var sample_table = $("#sample_table").DataTable({
         data: sample_data,
         columns: [SAMPLE_HEADER], 
-        scrollY: '600px',
+        // scrollY: '600px',
         scrollX: true,
         scrollCollapse: true,
         paging: true,

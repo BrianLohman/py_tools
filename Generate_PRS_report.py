@@ -279,7 +279,7 @@ for i, sample in enumerate(set(df_arr.flatten())):
     tf_array = sample == df_arr
     a = (np.array(np.where(tf_array == True)))
     ii = a[-1]
-    vals = np.zeros(5)
+    vals = np.zeros(len(groups))
     vals[ii] = 1
     vals = list(vals)
     col = [sample]

@@ -180,48 +180,6 @@ enrichment_by_size_div = plot(fig, validate = False, include_plotlyjs=False, out
 # In[7]:
 
 
-def make_hist_div(hist_vals, hist_line, hist_title, hist_div_id = None):
-    trace0 = go.Histogram(
-        x = hist_vals,
-        nbinsx = 100,
-        text = nlog_null_qvals.index
-    )
-
-    data = [trace0]
-    
-    layout = {'title': hist_title, 
-        'yaxis': dict(title = 'Frequency'),
-        'xaxis': dict(title = '-log(Simulated q-value) vs. -log(observed q-value)'),
-        'hovermode': 'closest',
-        'bargap': 0.1, 
-        'shapes':[{'type': 'line',
-            'x0':hist_line, 
-            'y0':0,
-            'x1':hist_line,
-            'y1':1,
-            'yref': "paper",
-            'line':{'color':'red','width': 3}
-        }]
-    }
-
-    fig = dict(data=data, layout=layout)
-
-    hist_div = plot(fig, validate = False, include_plotlyjs=False, output_type='div')
-    hist_div = hist_div.replace('\n', '')
-    
-    if hist_div_id: 
-        try:
-            existing_id = re.findall(r'id="(.*?)"|$', hist_div)[0]
-            hist_div = div.replace(existing_id, 'hist_div_id')
-        except IndexError:
-            pass
-
-    return hist_div
-
-
-# In[8]:
-
-
 # master dict to hold all data relvant to each GO term
 master_GO_dict = {}
 
@@ -352,7 +310,7 @@ for test_go_term in all_go_terms:
     master_GO_dict[test_go_term] = GO
 
 
-# In[40]:
+# In[8]:
 
 
 TEMPLATE = '''
@@ -399,7 +357,8 @@ TEMPLATE = '''
         </div>
         
         <h2>Histogram of GO terms that are more significant than expected by proband ascertainment bias</h2>
-        [HIST_DIV]
+        <div id = 'hist_div_id'> </div>
+        
         <p>Vertical red line indicates value of observed test statistic. Hover over bars to get simulation IDs from \
         Monte Carlo used to generate null hypothesis.</p>
 
@@ -426,11 +385,32 @@ var go = Object.keys(data)[0]
 const build_hist = (go) => {
     hist_vals = data[go]['hist_vals']
     hist_line = data[go]['hist_line']
-    hist_name = data[go]['name']
+    hist_title = data[go]['name']
+    
+    var trace = {
+        x: hist_vals,
+        type: 'histogram'
+    }
+    var hist_data = [trace]
+    
+    hist_layout = {'title': hist_title, 
+        'yaxis': {title: 'Frequency'},
+        'xaxis': {title: '-log(Simulated q-value) vs. -log(observed q-value)'},
+        'hovermode': 'closest',
+        'bargap': 0.1, 
+        'shapes':[{'type': 'line',
+            'x0':hist_line, 
+            'y0':0,
+            'x1':hist_line,
+            'y1':1,
+            'yref': "paper",
+            'line':{'color':'red','width': 3}
+        }]
+    }
     
     let hist_plot = document.getElementById("hist_div_id")
-    Plotly.react(hist_plot, [hist_vals, hist_line, hist_name])
-    console.log("here")
+    Plotly.react(hist_plot, hist_data, hist_layout)
+
 }
 
 const build_table = (go) => {
@@ -474,6 +454,7 @@ $('#go_select').on("change", () => {
 
 $(document).ready(function() {
     build_table(go)
+    build_hist(go)
 })
 
 </script>
@@ -481,7 +462,7 @@ $(document).ready(function() {
 '''
 
 
-# In[41]:
+# In[9]:
 
 
 # add in the data
@@ -491,7 +472,6 @@ html = TEMPLATE.replace("[DATA]", json.dumps(master_GO_dict))
 html = html.replace("[STICK_PLOT_DIV]", str(stick_plot_div))
 html = html.replace("[PVAL_DIV]", str(enrichment_by_pval_div))
 html = html.replace("[SIZE_DIV]", str(enrichment_by_size_div))
-html = html.replace("[HIST_DIV]", make_hist_div(master_GO_dict[list(master_GO_dict.keys())[0]]['hist_vals'], master_GO_dict[list(master_GO_dict.keys())[0]]['hist_line'], master_GO_dict[list(master_GO_dict.keys())[0]]['name']))
 
 select_term = []
 for key in name_dict.keys():

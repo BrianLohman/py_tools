@@ -352,7 +352,7 @@ for test_go_term in all_go_terms:
     master_GO_dict[test_go_term] = GO
 
 
-# In[27]:
+# In[40]:
 
 
 TEMPLATE = '''
@@ -410,7 +410,6 @@ TEMPLATE = '''
         (Sort based on Total Observations). Control + click to sort based on second category. </p>
         <table id="gene_table" class="table table-hover pb-3 display nowrap" width="100%"> </table>
 
-        
         <h2>Samples in simulated and observed groups</h2>
         <p>Cells indicate presence (1) or absence (0) of a sample in a group. Click colums to sort. \
          Control + click to sort based on second category.</p>
@@ -430,23 +429,25 @@ const build_hist = (go) => {
     hist_name = data[go]['name']
     
     let hist_plot = document.getElementById("hist_div_id")
-    Plotly.react(hist_plot, hist_vals, hist_line, hist_name)
+    Plotly.react(hist_plot, [hist_vals, hist_line, hist_name])
+    console.log("here")
 }
 
 const build_table = (go) => {
     if ( $.fn.DataTable.isDataTable('#gene_table') ) {
-      $('#gene_table').DataTable().destroy();
+      $('#gene_table').DataTable().destroy()
     }
-
+    $('#gene_table tbody').empty()
     if ( $.fn.DataTable.isDataTable('#sample_table') ) {
-      $('#sample_table').DataTable().destroy();
+      $('#sample_table').DataTable().destroy()  
     }
-
+    $('#sample_table tbody').empty()
+    
     gene_table = $("#gene_table").DataTable({
         data: data[go]['gene_table'],
         columns: data[go]['gene_header'], 
         // scrollY: '600px',
-        scrollX: true,
+        scrollX: false,
         scrollCollapse: true,
         paging: true,
         pagingType: "simple",
@@ -457,7 +458,7 @@ const build_table = (go) => {
         data: data[go]['sample_table'],
         columns: data[go]['sample_header'], 
         // scrollY: '600px',
-        scrollX: true,
+        scrollX: false,
         scrollCollapse: true,
         paging: true,
         pagingType: "simple",
@@ -468,6 +469,7 @@ const build_table = (go) => {
 $('#go_select').on("change", () => { 
     go = $('#go_select :selected').val()
     build_table(go)
+    build_hist(go)
 })
 
 $(document).ready(function() {
@@ -479,7 +481,7 @@ $(document).ready(function() {
 '''
 
 
-# In[28]:
+# In[41]:
 
 
 # add in the data

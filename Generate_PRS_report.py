@@ -310,24 +310,36 @@ for test_go_term in all_go_terms:
     master_GO_dict[test_go_term] = GO
 
 
-# In[8]:
+# In[62]:
 
 
 TEMPLATE = '''
 <!DOCTYPE html>
 
+
+
 <html>
     <head>
+        <meta charset="utf-8"/>
         <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
         <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.js"></script>
         <script type="text/javascript" src="https://cdn.datatables.net/v/bs4/dt-1.10.18/sl-1.3.0/datatables.min.js"></script>
+        <script src="https://cdn.datatables.net/1.10.16/js/dataTables.bootstrap4.min.js" type='text/javascript'></script>
+        <link href="https://cdn.datatables.net/v/bs4/dt-1.10.18/sl-1.3.0/datatables.min.css" rel="stylesheet" type="text/css"/>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
-        <style>body{ margin:0 100; background:white; }</style>
-        <meta charset="utf-8"/>
+
+        <style>
+            body {margin: 1% 2.5%; background:white }
+            p { margin: 0 2.5% }
+            h2 { margin: 1% 0}
+            .dataTables_filter {
+                text-align: left !important;
+            }
+        </style>
     </head>
     
     <body>
-        <h1>First Quartile of PRS for EA in Probands</h1>
+        <h1 align = 'center'>First Quartile of PRS for EA in Probands</h1>
 
         <!- - *** Section 1 *** - ->
         <h2>Simulated vs observed enrichment of GO terms</h2>
@@ -348,7 +360,7 @@ TEMPLATE = '''
         Hover over points to get GO term ID.</p>
 
         <!- - *** Section 4 *** - ->
-        <h2> Analysis of Specific GO terms </h2>
+        <h2> Analysis of Specific GO terms (populates histogram and tables below) </h2>
         <div>
             <label>Select GO Term</label>
             <select id="go_select">
@@ -367,12 +379,12 @@ TEMPLATE = '''
         <p>Cells indicate presence (1) or absence (0) of a gene in a group. Click colums to sort. \
         Genes present in all groups may represent a core set of genes driving GO enrichment \
         (Sort based on Total Observations). Control + click to sort based on second category. </p>
-        <table id="gene_table" class="table table-hover pb-3 display nowrap" width="100%"> </table>
+        <table id="gene_table" class="table table-hover pb-3 display nowrap" width="90%"> </table>
 
         <h2>Samples in simulated and observed groups</h2>
         <p>Cells indicate presence (1) or absence (0) of a sample in a group. Click colums to sort. \
          Control + click to sort based on second category.</p>
-        <table id="sample_table" class="table table-hover pb-3 display nowrap" width="100%"></table>
+        <table id="sample_table" class="table table-hover pb-3 display nowrap" width="90%"></table>
 
     </body>
 
@@ -426,23 +438,25 @@ const build_table = (go) => {
     gene_table = $("#gene_table").DataTable({
         data: data[go]['gene_table'],
         columns: data[go]['gene_header'], 
-        // scrollY: '600px',
-        scrollX: false,
+        scrollY: '600px',
+        scrollX: true,
         scrollCollapse: true,
-        paging: true,
+        paging: false,
         pagingType: "simple",
-        info: true
+        info: true,
+        dom: 'flrtip'
     })
 
     sample_table = $("#sample_table").DataTable({
         data: data[go]['sample_table'],
         columns: data[go]['sample_header'], 
-        // scrollY: '600px',
-        scrollX: false,
+        scrollY: '600px',
+        scrollX: true,
         scrollCollapse: true,
-        paging: true,
+        paging: false,
         pagingType: "simple",
-        info: true
+        info: true,
+        dom: 'flrtip'
     })
 }
 
@@ -462,7 +476,7 @@ $(document).ready(function() {
 '''
 
 
-# In[9]:
+# In[63]:
 
 
 # add in the data

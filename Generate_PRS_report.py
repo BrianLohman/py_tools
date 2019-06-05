@@ -20,6 +20,8 @@ parser.add_argument('-o', '--output', dest = 'report', help = 'name of report to
 parser.add_argument('-d', '--observed_data', dest = 'observed_data_fh', help = 'observed data. e.g. "first_EA_p1_data.txt"')
 parser.add_argument('-g', '--observed_genes', dest = 'observed_genes_fh', help = 'list of genes in observed data')
 parser.add_argument('-s', '--observed_samples', dest = 'observed_samples_fh', help = 'list of samples in observed data')
+parser.add_argument('-t', '--title', dest = 'report_title', help = 'title for head of report')
+args = parser.parse_args()
 
 # define input and output files
 simulated_qvals_fh = "topGO_10K_raw_qvals.txt"
@@ -34,16 +36,16 @@ null_gene_dict = pd.read_table(simulated_gene_dict_fh)
 
 # load results from PRS stratification
 # stats from topGO
-observed_df = pd.read_table(observed_data_fh)
+observed_df = pd.read_table(args.observed_data_fh)
 observed_df.columns = ['GO_term', 'Name', 'Annotated', 'Significant', 'Expected', 'p_val', 'q_val']
 
 # gene list used in topGO
-observed_genes = pd.read_table(observed_genes_fh)
+observed_genes = pd.read_table(args.observed_genes_fh)
 observed_genes.columns = ['observed']
 observed_genes = observed_genes.drop_duplicates()
 
 # samples that have those genes
-observed_samples = pd.read_table(observed_samples_fh)
+observed_samples = pd.read_table(args.observed_samples_fh)
 observed_samples.columns = ['observed']
 
 # -log 10 conversion
@@ -314,7 +316,7 @@ TEMPLATE = '''
     </head>
     
     <body>
-        <h1 align = 'center'>First Quartile of PRS for EA in Probands</h1>
+        <h1 align = 'center'>[TITLE]</h1>
 
         <!- - *** Section 1 *** - ->
         <h2>Simulated vs observed enrichment of GO terms</h2>
@@ -457,6 +459,7 @@ html = TEMPLATE.replace("[DATA]", json.dumps(master_GO_dict))
 html = html.replace("[STICK_PLOT_DIV]", str(stick_plot_div))
 html = html.replace("[PVAL_DIV]", str(enrichment_by_pval_div))
 html = html.replace("[SIZE_DIV]", str(enrichment_by_size_div))
+html = html.replace("[TITLE]", str(args.title))
 
 # list of go terms for dropdown  menu
 select_term = []
@@ -466,6 +469,6 @@ select_term = " ".join(select_term)
 html = html.replace("[TERM_SELECT]", select_term)
 
 # write to file
-f = open(report, "w")
+f = open(args.report, "w")
 f.write(html)
 f.close()

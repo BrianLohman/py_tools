@@ -407,10 +407,13 @@ const build_table = (go) => {
       $('#gene_table').DataTable().destroy()
     }
     $('#gene_table tbody').empty()
+    $('#gene_table thead').empty()
+
     if ( $.fn.DataTable.isDataTable('#sample_table') ) {
       $('#sample_table').DataTable().destroy()  
     }
     $('#sample_table tbody').empty()
+    $('#sample_table thead').empty()
     
     gene_table = $("#gene_table").DataTable({
         data: data[go]['gene_table'],

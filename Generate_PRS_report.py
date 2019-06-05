@@ -459,7 +459,7 @@ html = TEMPLATE.replace("[DATA]", json.dumps(master_GO_dict))
 html = html.replace("[STICK_PLOT_DIV]", str(stick_plot_div))
 html = html.replace("[PVAL_DIV]", str(enrichment_by_pval_div))
 html = html.replace("[SIZE_DIV]", str(enrichment_by_size_div))
-html = html.replace("[TITLE]", str(args.title))
+html = html.replace("[TITLE]", str(args.report_title))
 
 # list of go terms for dropdown  menu
 select_term = []

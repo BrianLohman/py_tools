@@ -1,8 +1,10 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[1]:
+# GOAL: make HTML report to summarize output of GO enrichment after stratification based on PRS, contrasting against a Monte Carlo simulated null
+# REQUIRES: topGO_10K_raw_qvals.txt, topGO_10K_sample_dict.txt, and topGO_10K_gene_table.txt to be in working directory
 
+# USAGE: Generate_PRS_report.py [-o report filename] [-d input data from GO] [-g list of genes from GO] [-s list of samples from GO]
 
 from plotly.offline import download_plotlyjs, init_notebook_mode, plot, iplot
 import pandas as pd
@@ -11,24 +13,18 @@ import plotly.graph_objs as go
 import numpy as np
 import json
 import re
+import argparse
 
-
-# In[2]:
-
+parser = argparse.ArgumentParser(description='generate HTML report from simulated and observed GO enrichment')
+parser.add_argument('-o', '--output', dest = 'report', help = 'name of report to write to file')
+parser.add_argument('-d', '--observed_data', dest = 'observed_data_fh', help = 'observed data. e.g. "first_EA_p1_data.txt"')
+parser.add_argument('-g', '--observed_genes', dest = 'observed_genes_fh', help = 'list of genes in observed data')
+parser.add_argument('-s', '--observed_samples', dest = 'observed_samples_fh', help = 'list of samples in observed data')
 
 # define input and output files
-simulated_qvals_fh = "test_topGO_10K_raw_qvals.txt"
-simulated_sample_dict_fh = "test_topGO_10K_sample_dict.txt"
-simulated_gene_dict_fh = "test_topGO_10K_gene_table.txt"
-observed_data_fh = '../first_EA_p1_data.txt'
-observed_genes_fh = '../first_EA_p1_gene_list.txt'
-observed_samples_fh = '../first_EA_p1_sample_list.txt'
-
-report = "test_report.html"
-
-
-# In[3]:
-
+simulated_qvals_fh = "topGO_10K_raw_qvals.txt"
+simulated_sample_dict_fh = "topGO_10K_sample_dict.txt"
+simulated_gene_dict_fh = "topGO_10K_gene_table.txt"
 
 ## load data and reformat as necessary
 # load results from simulation
@@ -68,10 +64,6 @@ null_scatter_df = null_scatter_df[scatter_df.GO_term]
 #build a dict of name to GO term
 name_dict = pd.Series(scatter_df.GO_term.values, index = scatter_df.Name).to_dict()
 
-
-# In[4]:
-
-
 ## plot mean and SD of null vs PRS 
 trace0 = go.Scatter(
     x = list(range(1,scatter_df.shape[0]+1)),
@@ -103,10 +95,6 @@ layout = dict(title = 'PRS stratification vs proband ascertainment bias',
 
 fig = dict(data=data, layout=layout)
 stick_plot_div = plot(fig, validate = False, include_plotlyjs=False, output_type='div')
-
-
-# In[5]:
-
 
 ## plot fold enrichment as a function of -log p-val
 # color by q-value
@@ -140,10 +128,6 @@ fig = dict(data=data, layout=layout)
 
 enrichment_by_pval_div = plot(fig, validate = False, include_plotlyjs=False, output_type='div')
 
-
-# In[6]:
-
-
 ## plot fold enrichment as a function of number of genes in GO term
 # color by q-value
 trace0 = go.Scatter(
@@ -175,10 +159,6 @@ layout = dict(title = 'Fold enrichment vs GO term size',
 fig = dict(data=data, layout=layout)
 
 enrichment_by_size_div = plot(fig, validate = False, include_plotlyjs=False, output_type='div')
-
-
-# In[7]:
-
 
 # master dict to hold all data relvant to each GO term
 master_GO_dict = {}
@@ -309,14 +289,9 @@ for test_go_term in all_go_terms:
     # add all data from each GO term to dict, keyed by GO term ID
     master_GO_dict[test_go_term] = GO
 
-
-# In[62]:
-
-
+# build template for html report
 TEMPLATE = '''
 <!DOCTYPE html>
-
-
 
 <html>
     <head>
@@ -475,11 +450,7 @@ $(document).ready(function() {
 </html>
 '''
 
-
-# In[63]:
-
-
-# add in the data
+# dump the data into the template in json format
 html = TEMPLATE.replace("[DATA]", json.dumps(master_GO_dict))
 
 # plots that only depend on the focal PRS, quartile, and proband/sibling status
@@ -487,20 +458,14 @@ html = html.replace("[STICK_PLOT_DIV]", str(stick_plot_div))
 html = html.replace("[PVAL_DIV]", str(enrichment_by_pval_div))
 html = html.replace("[SIZE_DIV]", str(enrichment_by_size_div))
 
+# list of go terms for dropdown  menu
 select_term = []
 for key in name_dict.keys():
     select_term.append("<option value = "+name_dict[key]+">"+key+"</option>")
 select_term = " ".join(select_term)
-
 html = html.replace("[TERM_SELECT]", select_term)
 
+# write to file
 f = open(report, "w")
 f.write(html)
 f.close()
-
-
-# In[ ]:
-
-
-
-

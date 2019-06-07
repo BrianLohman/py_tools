@@ -16,6 +16,7 @@ parser.add_argument('-w', '--ntasks-node', dest='ntasks', default = 8, help = 'n
 parser.add_argument('-m', '--mem', dest='mem', default = 128000, help = 'minimum memory required per node')
 parser.add_argument('-p', '--partition', dest = 'partition', default = "quinlan-shared-rw", help = 'quinlan-rw/quinlan-shared-rw')
 parser.add_argument('-t', '--time', dest='time', default = "12:00:00", type = str, help = 'max run time')
+parser.add_argument('-s', '--submit', dest = 'submit', default = True, type = bool, help = 'sbatch job files. or dont')
 args = parser.parse_args()
 
 # count the number of lines in the commands file
@@ -54,8 +55,10 @@ for line in open(args.commands):
     else:
         if line_count == n_commands:
             o.write(str(line))
+            o.write("wait") # wait for background jobs to finish
             o.close()
-            os.system("sbatch "+job_fh+".job")
+            if args.submit:
+                os.system("sbatch "+job_fh+".job")
             break
     
         if line_count % int(args.ntasks) != 0:
@@ -65,8 +68,10 @@ for line in open(args.commands):
 
     if line_count % int(args.ntasks) == 0: 
         o.write(str(line))
+        o.write("wait") # wait for background jobs to finish
         o.close()
-        os.system("sbatch "+job_fh+".job")
+        if args.submit:
+            os.system("sbatch "+job_fh+".job")
         job_fh = None
         line_count += 1
         continue

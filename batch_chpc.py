@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 # Build and submit jobs on CHPC
-# STATUS: working: 29 Nov 18
+# STATUS: working, and updated 10 June 2019
 # USAGE: python batch_chpc.py -n [job name] -c [commands] -w [ntasks/node] -m [mem/task]
 
 import sys
@@ -41,7 +41,13 @@ for line in open(args.commands):
     if job_fh == None:
         job_fh = args.job + "_" + str(line_count)
         o = open(job_fh + ".job", "w")
-        o.write('\n'.join(["#!/bin/bash", "#SBATCH --time="+args.time, "#SBATCH --account=quinlan-rw", "#SBATCH --partition="+args.partition, "#SBATCH --nodes=1", "#SBATCH --ntasks="+str(args.ntasks), "#SBATCH --mem="+str(args.mem), "#SBATCH --job-name="+job_fh, "#SBATCH -o call-"+job_fh+".out", "#SBATCH -e call-"+job_fh+".err", '\n', str(line)]))
+        o.write('\n'.join(["#!/bin/bash", "#SBATCH --time="+args.time, \
+                "#SBATCH --account=quinlan-rw", "#SBATCH --partition="+args.partition, \
+                "#SBATCH --nodes=1", "#SBATCH --ntasks="+str(args.ntasks), \
+                "#SBATCH --mem="+str(args.mem), "#SBATCH --job-name="+job_fh, \
+                "#SBATCH -o call-"+job_fh+".out", "#SBATCH -e call-"+job_fh+".err", '\n', \
+                str(line)]))
+
     # if there is only one command to run
         if line_count == n_commands:
             o.close()
@@ -55,8 +61,12 @@ for line in open(args.commands):
     else:
         if line_count == n_commands:
             o.write(str(line))
-            o.write("wait") # wait for background jobs to finish
+            
+            if line.endswith("&"):
+                o.write("wait") # wait for background jobs to finish
+            
             o.close()
+            
             if args.submit:
                 os.system("sbatch "+job_fh+".job")
             break
@@ -68,8 +78,11 @@ for line in open(args.commands):
 
     if line_count % int(args.ntasks) == 0: 
         o.write(str(line))
-        o.write("wait") # wait for background jobs to finish
+        if line.endswith("&"):
+            o.write("wait") # wait for background jobs to finish
+        
         o.close()
+        
         if args.submit:
             os.system("sbatch "+job_fh+".job")
         job_fh = None

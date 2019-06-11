@@ -4,7 +4,7 @@
 # GOAL: make HTML report to summarize output of GO enrichment after stratification based on PRS, contrasting against a Monte Carlo simulated null
 # REQUIRES: topGO_10K_raw_qvals.txt, topGO_10K_sample_dict.txt, and topGO_10K_gene_table.txt to be in working directory
 
-# USAGE: Generate_PRS_report.py [-o report filename] [-d input data from GO] [-g list of genes from GO] [-s list of samples from GO]
+# USAGE: Generate_PRS_report.py [-o report filename] [-p file trio prefix] [-t title inside report ]
 
 from plotly.offline import download_plotlyjs, init_notebook_mode, plot, iplot
 import pandas as pd
@@ -17,35 +17,33 @@ import argparse
 
 parser = argparse.ArgumentParser(description='generate HTML report from simulated and observed GO enrichment')
 parser.add_argument('-o', '--output', dest = 'report', help = 'name of report to write to file')
-parser.add_argument('-d', '--observed_data', dest = 'observed_data_fh', help = 'observed data. e.g. "first_EA_p1_data.txt"')
-parser.add_argument('-g', '--observed_genes', dest = 'observed_genes_fh', help = 'list of genes in observed data')
-parser.add_argument('-s', '--observed_samples', dest = 'observed_samples_fh', help = 'list of samples in observed data')
+parser.add_argument('-p', '--prefix', dest = 'prefix', help = 'file trio (data, genes, samples) prefix')
 parser.add_argument('-t', '--title', dest = 'report_title', help = 'title for head of report')
 args = parser.parse_args()
 
-# define input and output files
-simulated_qvals_fh = "topGO_10K_raw_qvals.txt"
-simulated_sample_dict_fh = "topGO_10K_sample_dict.txt"
-simulated_gene_dict_fh = "topGO_10K_gene_table.txt"
-
 ## load data and reformat as necessary
 # load results from simulation
-null_qvals = pd.read_table(simulated_qvals_fh)
-null_sample_dict = pd.read_table(simulated_sample_dict_fh)
-null_gene_dict = pd.read_table(simulated_gene_dict_fh)
+null_qvals = pd.read_table("./MC_EUR_data/topGO_10K_raw_qvals.txt")
+null_sample_dict = pd.read_table("./MC_EUR_data/topGO_10K_sample_dict.txt")
+null_gene_dict = pd.read_table("./MC_EUR_data/topGO_10K_gene_table.txt")
 
 # load results from PRS stratification
+# convert file prefix to file names
+observed_data_fh = args.prefix+'_data.txt'
+observed_genes_fh = args.prefix+'_gene_list.txt'
+observed_samples_fh = args.prefix+'_sample_list.txt'
+
 # stats from topGO
-observed_df = pd.read_table(args.observed_data_fh)
+observed_df = pd.read_table(observed_data_fh)
 observed_df.columns = ['GO_term', 'Name', 'Annotated', 'Significant', 'Expected', 'p_val', 'q_val']
 
 # gene list used in topGO
-observed_genes = pd.read_table(args.observed_genes_fh)
+observed_genes = pd.read_table(observed_genes_fh)
 observed_genes.columns = ['observed']
 observed_genes = observed_genes.drop_duplicates()
 
 # samples that have those genes
-observed_samples = pd.read_table(args.observed_samples_fh)
+observed_samples = pd.read_table(observed_samples_fh)
 observed_samples.columns = ['observed']
 
 # -log 10 conversion
@@ -408,7 +406,6 @@ const build_table = (go) => {
     }
     $('#gene_table tbody').empty()
     $('#gene_table thead').empty()
-
     if ( $.fn.DataTable.isDataTable('#sample_table') ) {
       $('#sample_table').DataTable().destroy()  
     }

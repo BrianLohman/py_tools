@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 # read in variant tables and filter down to genes in given list
 # write the number of variants that each individual has in these genes to file
 

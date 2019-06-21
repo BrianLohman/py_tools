@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 # read in a variant table, filter down to med and high impact variants in certain genes
 
 import pandas

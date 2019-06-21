@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 # make a table of the number of impacts (low,med,high) for each individual in the variant table
 # make a plot of the distribution of med and high impact variants
 

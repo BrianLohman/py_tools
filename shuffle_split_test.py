@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 # Given two table with PRS and n-variants as input:
 # 	combine
 # 	randomly split half

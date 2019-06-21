@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 # Given 1)a table with PRS and 2) variants as input:
 # 	randomly split half
 #	write files for clinco to test each half: differences in mean PRS by group (defined by n-variants)

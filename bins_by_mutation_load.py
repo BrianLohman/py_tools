@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 # assign individuals to a bin by their mutation load
 # uses the input of variant_table.nim
 # currently only considering probands of EUR ancestry, as defined by peddy

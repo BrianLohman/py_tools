@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import sys
 
 # USAGE: python subset_snps_bim_UCSC.py [.bim file with snps of interest] [master list of snps] > [snps in .bim]

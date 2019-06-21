@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 # read in a data frame of genes and counts of variants in that gene
 # read in a data frame samples and counts of variants in said genes
 # return a list of samples with the highest Spearman Rho (sample variant counts vs specified list)

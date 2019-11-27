@@ -42,7 +42,7 @@ for line in open(args.commands):
         job_fh = args.job + "_" + str(line_count)
         o = open(job_fh + ".job", "w")
         o.write('\n'.join(["#!/bin/bash", "#SBATCH --time="+args.time, \
-                "#SBATCH --account=quinlan-rw", "#SBATCH --partition="+args.partition, \
+                "#SBATCH --account=hci-rw", "#SBATCH --partition="+args.partition, \
                 "#SBATCH --nodes=1", "#SBATCH --ntasks="+str(args.ntasks), \
                 "#SBATCH --mem="+str(args.mem), "#SBATCH --job-name="+job_fh, \
                 "#SBATCH -o call-"+job_fh+".out", "#SBATCH -e call-"+job_fh+".err", '\n', \

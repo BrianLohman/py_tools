@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 # Build and submit jobs on CHPC
-# STATUS: working, and updated 10 June 2019
+# STATUS: Working. Updated 27 Nov 2019 for HCI
 # USAGE: python batch_chpc.py -n [job name] -c [commands] -w [ntasks/node] -m [mem/task]
 
 import sys
@@ -12,11 +12,11 @@ import re
 parser = argparse.ArgumentParser(description='generate and submit jobs to CHPC based on list of commands')
 parser.add_argument('-n','--job-name', dest='job', help = 'job base name')
 parser.add_argument('-c', '--commands', dest='commands', help = 'list of commands to run, one per line')
-parser.add_argument('-w', '--ntasks-node', dest='ntasks', default = 8, help = 'number of tasks per node')
-parser.add_argument('-m', '--mem', dest='mem', default = 128000, help = 'minimum memory required per node')
-parser.add_argument('-p', '--partition', dest = 'partition', default = "quinlan-shared-rw", help = 'quinlan-rw/quinlan-shared-rw')
-parser.add_argument('-t', '--time', dest='time', default = "12:00:00", type = str, help = 'max run time')
-parser.add_argument('-s', '--submit', dest = 'submit', default = True, type = bool, help = 'sbatch job files. or dont')
+parser.add_argument('-w', '--ntasks-node', dest='ntasks', default = 8, help = 'number of tasks per node, default is 8 tasks')
+parser.add_argument('-m', '--mem', dest='mem', default = 32000, help = 'minimum memory required per node, default = 32GB')
+parser.add_argument('-p', '--partition', dest = 'partition', default = "hci-rw", help = 'hci-rw is only available choice')
+parser.add_argument('-t', '--time', dest='time', default = "12:00:00", type = str, help = 'max run time, default is 12 hours')
+parser.add_argument('-s', '--submit', dest = 'submit', default = True, type = bool, help = 'sbatch job files. or dont. Default is True.')
 args = parser.parse_args()
 
 # count the number of lines in the commands file

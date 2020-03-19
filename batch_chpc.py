@@ -10,6 +10,7 @@ import argparse
 import re
 
 parser = argparse.ArgumentParser(description='generate and submit jobs to CHPC based on list of commands')
+parser.add_argument('-l', '--ml', dest = 'ml', help = 'modules to load for each slurm script')
 parser.add_argument('-n','--job-name', dest='job', help = 'job base name')
 parser.add_argument('-j', '--commands', dest='commands', help = 'list of commands to run, one per line')
 parser.add_argument('-w', '--ntasks-node', dest='ntasks', default = 8, help = 'number of tasks per node, default is 8 tasks')
@@ -48,6 +49,7 @@ for line in open(args.commands):
                "#SBATCH --nodes=1", "#SBATCH --ntasks="+str(args.ntasks), "#SBATCH --cpus-per-task="+str(args.cpus_task), \
                "#SBATCH --mem="+str(args.mem), "#SBATCH --job-name="+job_fh, \
                "#SBATCH -o call-"+job_fh+".out", "#SBATCH -e call-"+job_fh+".err", '\n', \
+               "module load"+str(ml) \
                str(line)]))
 
         # if there is only one command to run

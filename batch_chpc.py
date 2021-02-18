@@ -19,6 +19,7 @@ parser.add_argument('-p', '--partition', dest = 'partition', default = "hci-rw",
 parser.add_argument('-t', '--time', dest='time', default = "12:00:00", type = str, help = 'max run time, default is 12 hours')
 parser.add_argument('-d', '--dry-run', dest = 'submit', default = True, action='store_false', help = 'sbatch job files. or dont.')
 parser.add_argument('-c', '--cpus_task', dest = 'cpus_task', default = 1, help = 'number of cpus required for each task')
+parser.add_argument('-x', '--wait', dest = 'wait', default = False, action='store_true', help = 'add wait as last line for background jobs')
 args = parser.parse_args()
 
 # count the number of lines in the commands file
@@ -74,10 +75,9 @@ for line in open(args.commands):
     else:
         if line_count == n_commands:
             o.write(str(line))
-            
-            if line.endswith("&"):
-                o.write("wait") # wait for background jobs to finish
-            
+            if args.wait == True:
+                o.write('wait')
+
             o.close()
             
             if args.submit == True:
@@ -91,9 +91,9 @@ for line in open(args.commands):
 
     if line_count % int(args.ntasks) == 0: 
         o.write(str(line))
-        if line.endswith("&"):
-            o.write("wait") # wait for background jobs to finish
-        
+        if args.wait == True:
+            o.write('wait')
+
         o.close()
         
         if args.submit == True:

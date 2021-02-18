@@ -17,7 +17,7 @@ parser.add_argument('-w', '--ntasks-node', dest='ntasks', default = 8, help = 'n
 parser.add_argument('-m', '--mem', dest='mem', default = 32000, help = 'minimum memory required per node, default = 32GB')
 parser.add_argument('-p', '--partition', dest = 'partition', default = "hci-rw", help = 'hci-rw is only available choice')
 parser.add_argument('-t', '--time', dest='time', default = "12:00:00", type = str, help = 'max run time, default is 12 hours')
-parser.add_argument('-d', '--dry-run', dest = 'submit', default = True, action='store_false', help = 'sbatch job files. or dont. Default is True.')
+parser.add_argument('-d', '--dry-run', dest = 'submit', default = True, action='store_false', help = 'sbatch job files. or dont.')
 parser.add_argument('-c', '--cpus_task', dest = 'cpus_task', default = 1, help = 'number of cpus required for each task')
 args = parser.parse_args()
 

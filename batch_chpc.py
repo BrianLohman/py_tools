@@ -49,7 +49,7 @@ for line in open(args.commands):
                "#SBATCH --nodes=1", "#SBATCH --ntasks="+str(args.ntasks), "#SBATCH --cpus-per-task="+str(args.cpus_task), \
                "#SBATCH --mem="+str(args.mem), "#SBATCH --job-name="+job_fh, \
                "#SBATCH -o call-"+job_fh+".out", "#SBATCH -e call-"+job_fh+".err", '\n', \
-               "module load"+str(ml) \
+               "module load "+str(args.ml), \
                str(line)]))
 
         # if there is only one command to run

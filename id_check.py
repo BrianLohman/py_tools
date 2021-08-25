@@ -28,16 +28,16 @@ file_b_line = file_b.readline()
 line_no = 0
 
 # loop if either file has reached end of file
-while file_a_line != '' or file_b_line != '':
+while file_a_line != "" or file_b_line != "":
 
-    fields =  file_a_line.strip().split('\t')
+    fields = file_a_line.strip().split("\t")
     file_a_key = fields[key_a]
 
-    fields =  file_b_line.strip().split('\t')
+    fields = file_b_line.strip().split("\t")
     file_b_key = fields[key_b]
 
     if file_a_key != file_b_key:
-        print('\t'.join(["Fail", file_a_key, file_b_key]), file=sys.stderr)
+        print("\t".join(["Fail", file_a_key, file_b_key]), file=sys.stderr)
     if file_a_key == file_b_key:
         n_success += 1
 
@@ -48,4 +48,4 @@ while file_a_line != '' or file_b_line != '':
     # increment line counter
     line_no += 1
 
-print(' '.join([str(n_success), "matches out of", str(line_no)]))
+print(" ".join([str(n_success), "matches out of", str(line_no)]))

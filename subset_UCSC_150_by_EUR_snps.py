@@ -21,13 +21,15 @@ log = open(sys.argv[1][:-4] + ".subset.log", "w")
 keep = {}
 for line in open(sys.argv[2]):
     fields = line.rstrip().split("\t")
-    if not fields[3] in rsids: continue
+    if not fields[3] in rsids:
+        continue
     if fields[3] in keep:
-        if "alt" in fields[0]: continue
+        if "alt" in fields[0]:
+            continue
         try:
             assert "alt" in keep[fields[3]], (line, keep[fields[3]])
         except AssertionError as err:
-            log.write(str(err)+"\n")
+            log.write(str(err) + "\n")
             continue
     keep[fields[3]] = line
     found.add(fields[3])

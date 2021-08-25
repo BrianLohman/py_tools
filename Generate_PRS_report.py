@@ -15,10 +15,18 @@ import json
 import re
 import argparse
 
-parser = argparse.ArgumentParser(description='generate HTML report from simulated and observed GO enrichment')
-parser.add_argument('-o', '--output', dest = 'report', help = 'name of report to write to file')
-parser.add_argument('-p', '--prefix', dest = 'prefix', help = 'file trio (data, genes, samples) prefix')
-parser.add_argument('-t', '--title', dest = 'report_title', help = 'title for head of report')
+parser = argparse.ArgumentParser(
+    description="generate HTML report from simulated and observed GO enrichment"
+)
+parser.add_argument(
+    "-o", "--output", dest="report", help="name of report to write to file"
+)
+parser.add_argument(
+    "-p", "--prefix", dest="prefix", help="file trio (data, genes, samples) prefix"
+)
+parser.add_argument(
+    "-t", "--title", dest="report_title", help="title for head of report"
+)
 args = parser.parse_args()
 
 ## load data and reformat as necessary
@@ -29,136 +37,155 @@ null_gene_dict = pd.read_table("./MC_EUR_data/topGO_10K_gene_table.txt")
 
 # load results from PRS stratification
 # convert file prefix to file names
-observed_data_fh = args.prefix+'_data.txt'
-observed_genes_fh = args.prefix+'_gene_list.txt'
-observed_samples_fh = args.prefix+'_sample_list.txt'
+observed_data_fh = args.prefix + "_data.txt"
+observed_genes_fh = args.prefix + "_gene_list.txt"
+observed_samples_fh = args.prefix + "_sample_list.txt"
 
 # stats from topGO
 observed_df = pd.read_table(observed_data_fh)
-observed_df.columns = ['GO_term', 'Name', 'Annotated', 'Significant', 'Expected', 'p_val', 'q_val']
+observed_df.columns = [
+    "GO_term",
+    "Name",
+    "Annotated",
+    "Significant",
+    "Expected",
+    "p_val",
+    "q_val",
+]
 
 # gene list used in topGO
 observed_genes = pd.read_table(observed_genes_fh)
-observed_genes.columns = ['observed']
+observed_genes.columns = ["observed"]
 observed_genes = observed_genes.drop_duplicates()
 
 # samples that have those genes
 observed_samples = pd.read_table(observed_samples_fh)
-observed_samples.columns = ['observed']
+observed_samples.columns = ["observed"]
 
 # -log 10 conversion
-nlog_null_qvals = null_qvals.apply(lambda x: -np.log(x), axis = 0)
-observed_df['nlog_q_val'] = -np.log(observed_df.q_val)
-observed_df['nlog_p_val'] = -np.log(observed_df.p_val)
+nlog_null_qvals = null_qvals.apply(lambda x: -np.log(x), axis=0)
+observed_df["nlog_q_val"] = -np.log(observed_df.q_val)
+observed_df["nlog_p_val"] = -np.log(observed_df.p_val)
 
 # build dict of GO term to name
-go_dict = pd.Series(observed_df.Name.values, index = observed_df.GO_term).to_dict()
+go_dict = pd.Series(observed_df.Name.values, index=observed_df.GO_term).to_dict()
 
 ## new data frame for scatter plot
 scatter_df = observed_df.loc[observed_df.q_val <= 0.05]
 
 # get matching simulated values and reorder to match the observed values
-null_scatter_df = nlog_null_qvals.loc[:, nlog_null_qvals.columns.isin(list(scatter_df.GO_term))]
+null_scatter_df = nlog_null_qvals.loc[
+    :, nlog_null_qvals.columns.isin(list(scatter_df.GO_term))
+]
 null_scatter_df = null_scatter_df[scatter_df.GO_term]
 
-#build a dict of name to GO term
-name_dict = pd.Series(scatter_df.GO_term.values, index = scatter_df.Name).to_dict()
+# build a dict of name to GO term
+name_dict = pd.Series(scatter_df.GO_term.values, index=scatter_df.Name).to_dict()
 
 ## plot mean and SD of null vs PRS
 trace0 = go.Scatter(
-    x = list(range(1,scatter_df.shape[0]+1)),
-    y = null_scatter_df.mean(),
-    marker = {'color': 'blue'},
-    mode = 'markers',
-    name = 'Simulated Null',
-    error_y = dict(
-        array = null_scatter_df.std()*2,
-        visible = True),
-    text = scatter_df.Name
+    x=list(range(1, scatter_df.shape[0] + 1)),
+    y=null_scatter_df.mean(),
+    marker={"color": "blue"},
+    mode="markers",
+    name="Simulated Null",
+    error_y=dict(array=null_scatter_df.std() * 2, visible=True),
+    text=scatter_df.Name,
 )
 
 trace1 = go.Scatter(
-    x = list(range(1,observed_df.shape[0]+1)),
-    y = scatter_df.nlog_q_val,
-    marker = {'color': 'red'},
-    mode = 'markers',
-    name = 'PRS Stratification',
-    text = scatter_df.GO_term
+    x=list(range(1, observed_df.shape[0] + 1)),
+    y=scatter_df.nlog_q_val,
+    marker={"color": "red"},
+    mode="markers",
+    name="PRS Stratification",
+    text=scatter_df.GO_term,
 )
 
 data = [trace0, trace1]
 
-layout = dict(title = 'PRS stratification vs proband ascertainment bias',
-              yaxis = dict(title = '-log Q-value (mean and 2 SDs)'),
-              xaxis = dict(title = 'GO Term',ticks='',showticklabels=False)
+layout = dict(
+    title="PRS stratification vs proband ascertainment bias",
+    yaxis=dict(title="-log Q-value (mean and 2 SDs)"),
+    xaxis=dict(title="GO Term", ticks="", showticklabels=False),
 )
 
 fig = dict(data=data, layout=layout)
-stick_plot_div = plot(fig, validate = False, include_plotlyjs=False, output_type='div')
+stick_plot_div = plot(fig, validate=False, include_plotlyjs=False, output_type="div")
 
 ## plot fold enrichment as a function of -log p-val
 # color by q-value
 trace0 = go.Scatter(
-    x = observed_df.loc[observed_df.q_val > 0.05].nlog_p_val,
-    y = observed_df.loc[observed_df.q_val > 0.05].Significant/observed_df.loc[observed_df.q_val > 0.05].Expected,
-    marker = {'color': 'magenta'},
-    mode = 'markers',
-    name = 'q > 0.05',
-    text = observed_df.loc[observed_df.q_val > 0.05].Name
+    x=observed_df.loc[observed_df.q_val > 0.05].nlog_p_val,
+    y=observed_df.loc[observed_df.q_val > 0.05].Significant
+    / observed_df.loc[observed_df.q_val > 0.05].Expected,
+    marker={"color": "magenta"},
+    mode="markers",
+    name="q > 0.05",
+    text=observed_df.loc[observed_df.q_val > 0.05].Name,
 )
 
 trace1 = go.Scatter(
-    x = observed_df.loc[observed_df.q_val < 0.05].nlog_p_val,
-    y = observed_df.loc[observed_df.q_val < 0.05].Significant/observed_df.loc[observed_df.q_val < 0.05].Expected,
-    marker = {'color': 'green'},
-    mode = 'markers',
-    name = 'q < 0.05',
-    text = observed_df.loc[observed_df.q_val < 0.05].Name
+    x=observed_df.loc[observed_df.q_val < 0.05].nlog_p_val,
+    y=observed_df.loc[observed_df.q_val < 0.05].Significant
+    / observed_df.loc[observed_df.q_val < 0.05].Expected,
+    marker={"color": "green"},
+    mode="markers",
+    name="q < 0.05",
+    text=observed_df.loc[observed_df.q_val < 0.05].Name,
 )
 
 data = [trace0, trace1]
 
-layout = dict(title = 'Fold enrichment vs -log(p-value)',
-            yaxis = dict(title = 'Fold enrichment (observed/expected)'),
-            xaxis = dict(title = '-log(p-value)'),
-            hovermode = 'closest'
+layout = dict(
+    title="Fold enrichment vs -log(p-value)",
+    yaxis=dict(title="Fold enrichment (observed/expected)"),
+    xaxis=dict(title="-log(p-value)"),
+    hovermode="closest",
 )
 
 fig = dict(data=data, layout=layout)
 
-enrichment_by_pval_div = plot(fig, validate = False, include_plotlyjs=False, output_type='div')
+enrichment_by_pval_div = plot(
+    fig, validate=False, include_plotlyjs=False, output_type="div"
+)
 
 ## plot fold enrichment as a function of number of genes in GO term
 # color by q-value
 trace0 = go.Scatter(
-    x = observed_df.loc[observed_df.q_val > 0.05].Annotated,
-    y = observed_df.loc[observed_df.q_val > 0.05].Significant/observed_df.loc[observed_df.q_val > 0.05].Expected,
-    marker = {'color': 'orange'},
-    mode = 'markers',
-    name = 'q > 0.05',
-    text = observed_df.loc[observed_df.q_val > 0.05].Name
+    x=observed_df.loc[observed_df.q_val > 0.05].Annotated,
+    y=observed_df.loc[observed_df.q_val > 0.05].Significant
+    / observed_df.loc[observed_df.q_val > 0.05].Expected,
+    marker={"color": "orange"},
+    mode="markers",
+    name="q > 0.05",
+    text=observed_df.loc[observed_df.q_val > 0.05].Name,
 )
 
 trace1 = go.Scatter(
-    x = observed_df.loc[observed_df.q_val < 0.05].Annotated,
-    y = observed_df.loc[observed_df.q_val < 0.05].Significant/observed_df.loc[observed_df.q_val < 0.05].Expected,
-    marker = {'color': 'purple'},
-    mode = 'markers',
-    name = 'q < 0.05',
-    text = observed_df.loc[observed_df.q_val < 0.05].Name
+    x=observed_df.loc[observed_df.q_val < 0.05].Annotated,
+    y=observed_df.loc[observed_df.q_val < 0.05].Significant
+    / observed_df.loc[observed_df.q_val < 0.05].Expected,
+    marker={"color": "purple"},
+    mode="markers",
+    name="q < 0.05",
+    text=observed_df.loc[observed_df.q_val < 0.05].Name,
 )
 
 data = [trace0, trace1]
 
-layout = dict(title = 'Fold enrichment vs GO term size',
-            yaxis = dict(title = 'Fold enrichment (observed/expected)'),
-            xaxis = dict(title = 'Number of Genes in GO term'),
-            hovermode = 'closest'
+layout = dict(
+    title="Fold enrichment vs GO term size",
+    yaxis=dict(title="Fold enrichment (observed/expected)"),
+    xaxis=dict(title="Number of Genes in GO term"),
+    hovermode="closest",
 )
 
 fig = dict(data=data, layout=layout)
 
-enrichment_by_size_div = plot(fig, validate = False, include_plotlyjs=False, output_type='div')
+enrichment_by_size_div = plot(
+    fig, validate=False, include_plotlyjs=False, output_type="div"
+)
 
 # master dict to hold all data relvant to each GO term
 master_GO_dict = {}
@@ -167,62 +194,68 @@ master_GO_dict = {}
 names = []
 
 all_go_terms = scatter_df.GO_term
-#all_go_terms = ["GO:0086010"]
+# all_go_terms = ["GO:0086010"]
 
 for test_go_term in all_go_terms:
     # start dictionary with basic info
     GO = {}
-    GO['go_id'] = test_go_term
-    GO['name'] = go_dict[test_go_term] # lookup from prior dict
+    GO["go_id"] = test_go_term
+    GO["name"] = go_dict[test_go_term]  # lookup from prior dict
 
     # save list of names for dropdown menus later
     names.append(go_dict[test_go_term])
 
     ## plotting histogram of null q-values
-    GO['hist_vals'] = list(nlog_null_qvals[test_go_term].values)
-    GO['hist_line'] = observed_df.loc[observed_df.GO_term == test_go_term].nlog_q_val.values[0]
+    GO["hist_vals"] = list(nlog_null_qvals[test_go_term].values)
+    GO["hist_line"] = observed_df.loc[
+        observed_df.GO_term == test_go_term
+    ].nlog_q_val.values[0]
 
     ## Explore simulations with test statistics more extreme than observed statistic
     # observed value
-    test_stat = observed_df.loc[observed_df.GO_term == test_go_term].nlog_q_val.values[0]
+    test_stat = observed_df.loc[observed_df.GO_term == test_go_term].nlog_q_val.values[
+        0
+    ]
 
     # select simulation data which are more extreme
-    outlier = nlog_null_qvals.loc[nlog_null_qvals[test_go_term] > test_stat].index.values
+    outlier = nlog_null_qvals.loc[
+        nlog_null_qvals[test_go_term] > test_stat
+    ].index.values
 
     # lookup in gene list dictionary
     outlier_samples = null_sample_dict[outlier]
 
     # lookup in sample dictionary
     outlier_genes = null_gene_dict.loc[null_gene_dict.index.isin(outlier)]
-    outlier_genes = outlier_genes.loc[:, (outlier_genes != 0).any(axis = 0)]
+    outlier_genes = outlier_genes.loc[:, (outlier_genes != 0).any(axis=0)]
 
     # add on the observed data
     # samples
-    outlier_samples['observed'] = observed_samples.observed.values
+    outlier_samples["observed"] = observed_samples.observed.values
 
     # genes
     outlier_genes = outlier_genes.transpose()
-    outlier_genes['observed'] = 0
+    outlier_genes["observed"] = 0
 
     for i in outlier_genes.index.values:
         if i in observed_genes.observed.values:
-            outlier_genes.at[i,'observed'] = 1
+            outlier_genes.at[i, "observed"] = 1
         else:
             continue
 
-    outlier_genes['Total_Observations'] = outlier_genes.sum(axis = 1)
+    outlier_genes["Total_Observations"] = outlier_genes.sum(axis=1)
     outlier_genes = outlier_genes[outlier_genes.columns[::-1]]
-    #print(outlier_genes.head())
+    # print(outlier_genes.head())
 
     # convert to list of lists (where each list is a row) for jquery
-    gene_header = ['gene']
+    gene_header = ["gene"]
     gene_header.extend(outlier_genes.columns)
 
-    #print(header)
-    gene_header = [{"title":h} for h in gene_header]
+    # print(header)
+    gene_header = [{"title": h} for h in gene_header]
 
     # save to dict
-    GO['gene_header'] = gene_header
+    GO["gene_header"] = gene_header
 
     gene_table = []
     for i in range(len(outlier_genes.index)):
@@ -233,47 +266,47 @@ for test_go_term in all_go_terms:
         gene_table.append(tmp)
 
     # add to dictionary
-    GO['gene_table'] = gene_table
+    GO["gene_table"] = gene_table
 
     ## outlier samples
-    #print(outlier_samples.head())
+    # print(outlier_samples.head())
 
     df_arr = outlier_samples.values
     groups = outlier_samples.columns.values
-    colnames = ['sample_id']
+    colnames = ["sample_id"]
     colnames.extend(groups)
 
     empty_df = pd.DataFrame(columns=colnames)
 
     for i, sample in enumerate(set(df_arr.flatten())):
         tf_array = sample == df_arr
-        a = (np.array(np.where(tf_array == True)))
+        a = np.array(np.where(tf_array == True))
         ii = a[-1]
         vals = np.zeros(len(groups))
         vals[ii] = 1
         vals = list(vals)
         col = [sample]
         vals.insert(0, sample)
-        empty_df = empty_df.append(dict(zip(colnames, vals)), ignore_index = True)
+        empty_df = empty_df.append(dict(zip(colnames, vals)), ignore_index=True)
 
     sample_table = empty_df
-    sample_table['Total_Observations'] = sample_table.sum(axis = 1)
+    sample_table["Total_Observations"] = sample_table.sum(axis=1)
 
     sample_table = sample_table.set_index(sample_table.sample_id)
-    sample_table.drop('sample_id', inplace = True, axis = 1)
+    sample_table.drop("sample_id", inplace=True, axis=1)
     sample_table = sample_table.astype(int)
     sample_table = sample_table[sample_table.columns[::-1]]
-    #print(sample_table.head())
+    # print(sample_table.head())
 
     # convert to list of lists (where each list is a row) for jquery
-    sample_header = ['sample']
+    sample_header = ["sample"]
     sample_header.extend(outlier_genes.columns)
 
-    #print(header)
-    sample_header = [{"title":h} for h in sample_header]
+    # print(header)
+    sample_header = [{"title": h} for h in sample_header]
 
     # save to dict
-    GO['sample_header'] = sample_header
+    GO["sample_header"] = sample_header
 
     sample_lists = []
     for i in range(len(outlier_samples.index)):
@@ -284,13 +317,13 @@ for test_go_term in all_go_terms:
         sample_lists.append(tmp)
 
     # add to dictionary
-    GO['sample_table'] = sample_lists
+    GO["sample_table"] = sample_lists
 
     # add all data from each GO term to dict, keyed by GO term ID
     master_GO_dict[test_go_term] = GO
 
 # build template for html report
-TEMPLATE = '''
+TEMPLATE = """
 <!DOCTYPE html>
 
 <html>
@@ -450,7 +483,7 @@ $(document).ready(function() {
 
 </script>
 </html>
-'''
+"""
 
 # dump the data into the template in json format
 html = TEMPLATE.replace("[DATA]", json.dumps(master_GO_dict))
@@ -464,7 +497,7 @@ html = html.replace("[TITLE]", str(args.report_title))
 # list of go terms for dropdown  menu
 select_term = []
 for key in name_dict.keys():
-    select_term.append("<option value = "+name_dict[key]+">"+key+"</option>")
+    select_term.append("<option value = " + name_dict[key] + ">" + key + "</option>")
 select_term = " ".join(select_term)
 html = html.replace("[TERM_SELECT]", select_term)
 

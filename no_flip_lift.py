@@ -6,6 +6,7 @@ import toolshed as ts
 
 # USAGE: python lift.py [hg38 rsIDs and positions] [hg19/37 .bim with rsIDs] [hg37 ref] [hg38 ref]
 
+
 def read_lookup(fname):
     d = {}
     k = 0
@@ -19,36 +20,43 @@ def read_lookup(fname):
             print(k, file=sys.stderr)
     return d
 
+
 L = read_lookup(sys.argv[1])
 fa = Fasta(sys.argv[3], read_ahead=100000, as_raw=True, sequence_always_upper=True)
 fa38 = Fasta(sys.argv[4], read_ahead=100000, as_raw=True, sequence_always_upper=True)
 
 print("read %d locations into lookup keyed by rsid" % len(L), file=sys.stderr)
 
+
 def fix(fa, chrom, pos, ref, alt, prefix="", rs=None):
     pos = int(pos)
-    faref = fa[prefix + chrom][pos-1]
+    faref = fa[prefix + chrom][pos - 1]
     if faref != ref:
         if faref != alt:
             print(rs, chrom, pos, ref, alt, "ref not found", faref, file=log)
-            return None,None
+            return None, None
         return ref, alt
     return ref, alt
 
-    #if faref != ref:
+    # if faref != ref:
     #   if faref != alt:
     #       print(rs, chrom, pos, ref, alt, "setting ref to ->", faref, file=log)
     #       return faref, alt
     #   return alt, ref
-    #return ref, alt
+    # return ref, alt
+
 
 log = open(sys.argv[2] + ".log", "w")
 
-for (chrom, rs, value, pos, ref, alt) in (l.rstrip().split("\t") for l in open(sys.argv[2])):
+for (chrom, rs, value, pos, ref, alt) in (
+    l.rstrip().split("\t") for l in open(sys.argv[2])
+):
     # fix ref/alt order on original reference
     ref, alt = fix(fa, chrom, pos, ref, alt)
-    if ref is None: continue
-    if alt is None: continue
+    if ref is None:
+        continue
+    if alt is None:
+        continue
     try:
         oc, oe = L[rs]
     except KeyError:
@@ -61,6 +69,8 @@ for (chrom, rs, value, pos, ref, alt) in (l.rstrip().split("\t") for l in open(s
     # update ref and alt to hg38. in some cases these are flipped
     ref, alt = fix(fa38, chrom, pos, ref, alt, prefix="chr", rs=rs)
 
-    if ref is None: continue
-    if alt is None: continue
-    print("\t".join(("chr"+chrom, rs, value, pos, ref, alt)))
+    if ref is None:
+        continue
+    if alt is None:
+        continue
+    print("\t".join(("chr" + chrom, rs, value, pos, ref, alt)))

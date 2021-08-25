@@ -7,16 +7,18 @@ import sys
 # read in the SFARI gene list as a dictionary
 sfari = {}
 
-for toks in (x.strip().split('\t') for x in open('SFARI-Gene_genes_export18-09-2018.txt')):
-	sfari[toks[1]] = toks[5]
+for toks in (
+    x.strip().split("\t") for x in open("SFARI-Gene_genes_export18-09-2018.txt")
+):
+    sfari[toks[1]] = toks[5]
 
 # dictioinary look up of genes in the pathway file
-for toks in (x.strip().split('\t') for x in open(sys.argv[1])):
-	gene = toks[3]
+for toks in (x.strip().split("\t") for x in open(sys.argv[1])):
+    gene = toks[3]
 
-	try:
-		score = sfari[gene]
-	except KeyError:
-		continue
+    try:
+        score = sfari[gene]
+    except KeyError:
+        continue
 
-	print gene,score
+    print(gene, score)

@@ -14,7 +14,7 @@ pos_index = 3
 a_index = 4
 b_index = 5
 
-assert a_index < b_index, ("specify a < b")
+assert a_index < b_index, "specify a < b"
 
 bad = open(prefix + ".bad.bim", "w")
 nbad = 0
@@ -24,14 +24,15 @@ out = open(prefix + ".fixed.bim", "w")
 seq = ""
 last_chrom = None
 for i, toks in enumerate(x.rstrip().split("\t") for x in open(bim)):
-    if i == 0 and "CHR" in toks: continue
+    if i == 0 and "CHR" in toks:
+        continue
 
     if toks[chrom_index] != last_chrom:
         last_chrom = toks[chrom_index]
         seq = fa[last_chrom]
 
     pos = int(toks[pos_index]) - 1
-    ref = seq[pos] # ref sequence for the given chrom, pos
+    ref = seq[pos]  # ref sequence for the given chrom, pos
 
     # error checking
     if not toks[a_index] in "ACTG":
@@ -50,7 +51,7 @@ for i, toks in enumerate(x.rstrip().split("\t") for x in open(bim)):
 
     # if the a_index doesn't hold the reference allele, then we flip a and b.
     if toks[a_index] != ref:
-      toks[a_index], toks[b_index] = toks[b_index], toks[a_index]
+        toks[a_index], toks[b_index] = toks[b_index], toks[a_index]
     out.write("\t".join(toks) + "\n")
 
-print "n_bad: %d out of %d" % (nbad, i)
+print("n_bad: %d out of %d" % (nbad, i))

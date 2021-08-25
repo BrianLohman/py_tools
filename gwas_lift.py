@@ -8,14 +8,14 @@ import glob
 rs_to_pos = {}
 
 # populate dictionary
-for toks in (x.strip().split('\t') for x in open(sys.argv[1])):
+for toks in (x.strip().split("\t") for x in open(sys.argv[1])):
     chrom = toks[0]
     hg38_pos = toks[2]
     rsid = toks[3]
-    rs_to_pos[rsid] = [chrom,hg38_pos]
+    rs_to_pos[rsid] = [chrom, hg38_pos]
 
 # read in gwas files
-gwas = glob.glob('*.assoc')
+gwas = glob.glob("*.assoc")
 
 # loop through gwas files, looking up rsIDs in dictionary
 # print unmapped rsIDs to .unMapped file
@@ -25,7 +25,7 @@ for g in gwas:
     out = open(g[:-6] + ".hg38.assoc", "w")
     log = open(g + ".log", "w")
     out.write("\t".join(["SNP", "CHR", "BP", "A1", "A2", "BETA", "P\n"]))
-    for i,  toks in enumerate(x.strip().split('\t') for x in open(g)):
+    for i, toks in enumerate(x.strip().split("\t") for x in open(g)):
         if i == 0 and "SNP" in toks:
             continue
         A1 = toks[3]
@@ -40,6 +40,6 @@ for g in gwas:
             continue
         chrom = snp[0]
         hg38_pos = snp[1]
-        out.write('\t'.join([rsid,chrom,hg38_pos,A1,A2,beta,p+'\n']))
+        out.write("\t".join([rsid, chrom, hg38_pos, A1, A2, beta, p + "\n"]))
     out.close()
     log.close()

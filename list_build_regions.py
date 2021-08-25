@@ -1,6 +1,7 @@
 import sys
-import pandas
+
 import numpy as np
+import pandas
 
 # USAGE: python list_build_regions.py sorted_hapmap_combined_chroms_hg37.out no_hap_sorted_regions_with_name_hg37.tab 2 > pathway_haplotype_regions_hg37.txt
 

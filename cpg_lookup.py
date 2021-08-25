@@ -1,11 +1,9 @@
 #!/usr/bin/env python
-
 # with bed file, check to see if variants are in possible CpG context
-
 # USAGE: cpg_lookup.py [variant file] [reference genome]
+import sys
 
 from pyfaidx import Fasta
-import sys
 
 # define I/O
 bed_file = sys.argv[1]

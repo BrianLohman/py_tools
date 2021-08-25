@@ -1,6 +1,7 @@
 from __future__ import print_function
-import sys
+
 import glob
+import sys
 
 # convert the rsID to chr:BP in summary stats (.assoc files)
 

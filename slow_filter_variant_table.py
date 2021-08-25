@@ -1,10 +1,9 @@
 #!/usr/bin/env python
-
 # read in a variant table, filter down to med and high impact variants in certain genes
-
-import pandas
 import sys
+
 import numpy
+import pandas
 
 # read in table of variants
 variants = pandas.read_table(sys.argv[1], low_memory=False)

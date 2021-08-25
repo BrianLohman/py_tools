@@ -1,13 +1,11 @@
 #!/usr/bin/env python
-
 # Build and submit jobs on CHPC
 # STATUS: Working. Updated 18 Feb 2021
 # USAGE: python batch_chpc.py -n [job name] -c [commands] -w [ntasks/node] -m [mem/task]
-
-import sys
-import os
 import argparse
+import os
 import re
+import sys
 
 parser = argparse.ArgumentParser(
     description="generate and submit jobs to CHPC based on list of commands"

@@ -1,10 +1,7 @@
 # reduce the number of entries in the gene models file to 1 per gene
 # For each gene, list the smallest and largest position in bp
-
 # USAGE: python reduce_gene_models.py [gene_models]
-
 # ASSUMES: 1) the list of gene models is sorted based on gene name, 2) the same gene does not occur on more than one chromosome
-
 import sys
 
 gene_models = sys.argv[1]

@@ -1,7 +1,8 @@
 #!/usr/bin/env python
-
 from __future__ import print_function
+
 import sys
+
 import cyvcf2
 
 print(cyvcf2, cyvcf2.__version__, file=sys.stderr)

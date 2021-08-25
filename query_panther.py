@@ -1,9 +1,9 @@
 #!/usr/bin/env python
-
 # Submit a request to the Panther database for GO enrichment
+from collections import defaultdict
+
 import pandas
 import requests
-from collections import defaultdict
 
 # assign values to form fields
 form_data = {

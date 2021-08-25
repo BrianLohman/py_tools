@@ -1,6 +1,7 @@
 from __future__ import print_function
-import sys
+
 import glob
+import sys
 
 # USAGE: python gwas_lift.py [target (hg38) dictionary]
 

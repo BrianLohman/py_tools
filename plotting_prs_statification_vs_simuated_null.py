@@ -1,12 +1,15 @@
 #!/usr/bin/env python
-
-from plotly.offline import download_plotlyjs, init_notebook_mode, plot, iplot
-import pandas as pd
-import plotly.plotly as py
-import plotly.graph_objs as go
-import numpy as np
-import rpy2
 import base64
+
+import numpy as np
+import pandas as pd
+import plotly.graph_objs as go
+import plotly.plotly as py
+import rpy2
+from plotly.offline import download_plotlyjs
+from plotly.offline import init_notebook_mode
+from plotly.offline import iplot
+from plotly.offline import plot
 
 get_ipython().run_line_magic("load_ext", "rpy2.ipython")
 

@@ -1,16 +1,14 @@
 #!/usr/bin/env python
-
 # Gather kraken2 reports from a directory and assemble them into 1 large table
 # No filters applied
 # Rows are observations from the kraken2 report
 # Columns are individuals
 # 0 is used where a taxon was not observed in a given sample
-
 # USAGE: collect_kraken2_reports.py --dir [directory to look for reports in] --out [results file name]
-
 import argparse
-import pandas
 import glob
+
+import pandas
 
 # build arg parser
 parser = argparse.ArgumentParser(description="parse and assemble kraken2 reports")

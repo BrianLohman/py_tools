@@ -1,8 +1,10 @@
 from __future__ import print_function
-import sys
-from pyfaidx import Fasta
+
 import gzip
+import sys
+
 import toolshed as ts
+from pyfaidx import Fasta
 
 # USAGE: python lift.py [hg38 rsIDs and positions] [hg19/37 .bim with rsIDs] [hg37 ref] [hg38 ref]
 

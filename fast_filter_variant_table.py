@@ -1,15 +1,13 @@
 #!/usr/bin/env python
-
 # read in variant tables and filter down to genes in given list
 # write the number of variants that each individual has in these genes to file
-
 # USAGE: python fast_filter_variant_table.py -v [variant table] -g [genes of interest] -o [output name]
+import argparse
+import sys
 
 import dask.dataframe as ddf
-from dask.distributed import Client
-import sys
-import argparse
 import pandas
+from dask.distributed import Client
 
 # this works on AWS
 client = Client()  # client = Client(processes = False) for local machines

@@ -1,16 +1,14 @@
 #!/usr/bin/env python
-
 # Given two table with PRS and n-variants as input:
 # 	combine
 # 	randomly split half
 # 	test each half: differences in mean PRS by group (defined by n-variants)
-
 # USAGE: python shuffle_split_test.py --file_a [variant table] --file_b [variant table] --prefix [out file prefix]
-
-import pandas
-import sys
-import numpy as np
 import argparse
+import sys
+
+import numpy as np
+import pandas
 
 parser = argparse.ArgumentParser(
     description="join two variant tables, randomly split half, write clinco input to file"

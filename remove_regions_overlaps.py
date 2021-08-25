@@ -1,5 +1,4 @@
 # remove any overlaps among lines in a bed file used for regions extract
-
 import sys
 
 bed = sys.argv[1]

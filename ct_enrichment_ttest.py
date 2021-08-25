@@ -1,9 +1,9 @@
 #!/usr/bin/env python
+import sys
 
+import numpy as np
 import pandas as pd
 from scipy import stats
-import numpy as np
-import sys
 
 # phenotype data
 m = pd.read_table("June2019_EUR_master_PRS_pheno.txt", sep="\t")

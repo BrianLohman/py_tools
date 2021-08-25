@@ -1,8 +1,6 @@
 #!/usr/bin/env python
-
 # parse the output of a kraken2 report
 # apply various filters (currently the number of reads and taxon)
-
 import argparse
 
 parser = argparse.ArgumentParser(

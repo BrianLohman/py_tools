@@ -1,19 +1,20 @@
 #!/usr/bin/env python
 # coding: utf-8
-
 # GOAL: make HTML report to summarize output of GO enrichment after stratification based on PRS, contrasting against a Monte Carlo simulated null
 # REQUIRES: topGO_10K_raw_qvals.txt, topGO_10K_sample_dict.txt, and topGO_10K_gene_table.txt to be in working directory
-
 # USAGE: Generate_PRS_report.py [-o report filename] [-p file trio prefix] [-t title inside report ]
-
-from plotly.offline import download_plotlyjs, init_notebook_mode, plot, iplot
-import pandas as pd
-import plotly.plotly as py
-import plotly.graph_objs as go
-import numpy as np
+import argparse
 import json
 import re
-import argparse
+
+import numpy as np
+import pandas as pd
+import plotly.graph_objs as go
+import plotly.plotly as py
+from plotly.offline import download_plotlyjs
+from plotly.offline import init_notebook_mode
+from plotly.offline import iplot
+from plotly.offline import plot
 
 parser = argparse.ArgumentParser(
     description="generate HTML report from simulated and observed GO enrichment"

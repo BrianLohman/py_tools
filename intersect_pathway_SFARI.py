@@ -1,5 +1,4 @@
 # intersect the list of genes in a pathway and the list of SFARI genes, given a gene score filter
-
 import sys
 
 # USAGE: python intersect_pathway_SFARI.py [pathway bed file]

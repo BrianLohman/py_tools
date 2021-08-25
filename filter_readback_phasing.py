@@ -1,9 +1,6 @@
 #!/usr/bin/env python
-
 # Filter de novos from readback phasing
-
 # Usage: filter_readback_phasing.py [input bed file] [output filename]
-
 import sys
 
 out = open(sys.argv[2], "w")

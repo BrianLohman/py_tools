@@ -1,9 +1,9 @@
 #!/usr/bin/env python
-
-import sys
-from pyfaidx import Fasta
 import gzip
+import sys
+
 import toolshed as ts
+from pyfaidx import Fasta
 
 # USAGE: python gwas_check.py [.assoc file] [hg38 ref]
 

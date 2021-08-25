@@ -1,7 +1,7 @@
 # split a bed file by chrom
 # output a new bed file for each chrom, keeping the input file prefix
-
 import sys
+
 import pandas
 
 bedfile = sys.argv[1]

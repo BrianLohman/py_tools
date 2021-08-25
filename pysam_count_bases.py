@@ -1,7 +1,7 @@
 #!/usr/bin/env python
+import sys
 
 import pysam
-import sys
 
 # name output based on input and print heades
 outfile = open(sys.argv[1][:-4] + "_bases.txt", "w")

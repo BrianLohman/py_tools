@@ -1,14 +1,15 @@
 #!/usr/bin/env python
-
 # make a table of the number of impacts (low,med,high) for each individual in the variant table
 # make a plot of the distribution of med and high impact variants
-
-from plotly.offline import download_plotlyjs, init_notebook_mode, plot
-import pandas
 import sys
-import plotly.plotly as py
-import plotly.graph_objs as go
+
 import numpy as np
+import pandas
+import plotly.graph_objs as go
+import plotly.plotly as py
+from plotly.offline import download_plotlyjs
+from plotly.offline import init_notebook_mode
+from plotly.offline import plot
 
 init_notebook_mode(connected=True)
 

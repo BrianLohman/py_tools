@@ -1,13 +1,12 @@
 #!/usr/bin/env python
-
 # Simulate the expected functional enrichment (GO BP) of the average proband in SSC
+import random
+import statistics as stats
+from collections import Counter
+from collections import defaultdict
 
 import pandas
-import random
 import requests
-from collections import defaultdict
-from collections import Counter
-import statistics as stats
 
 # Read in Simons data
 master = pandas.read_table("15_Jan_19_Simons_master_ancestry_corrected_PRS.txt")

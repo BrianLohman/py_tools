@@ -1,7 +1,8 @@
-from quicksect import IntervalTree
-import toolshed as ts
 import sys
 from collections import defaultdict
+
+import toolshed as ts
+from quicksect import IntervalTree
 
 
 # STATUS: INCOMPLETE, not currently developing

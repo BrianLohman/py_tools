@@ -1,5 +1,4 @@
 # build regions file for extracting gene models in pathways of interest from vcf file
-
 # build dictionary of gene name and associated pathway
 gene_to_pathway = {}
 

@@ -1,4 +1,5 @@
 import sys
+
 from pyfaidx import Fasta
 
 # USAGE

@@ -1,5 +1,4 @@
 # build regions file for extracting gene models in pathways of interest from vcf file
-
 import sys
 
 # USAGE: python build_regions.py [thinned gene sorted gene models]

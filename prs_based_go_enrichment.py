@@ -1,13 +1,12 @@
 #!/usr/bin/env python
-
 # REQUIRES 15_Jan_19_Simons_master_ancestry_corrected_PRS.txt AND med_high_GATK_variants.txt IN WORKING DIRECTORY
+import argparse
+import random
+from collections import Counter
+from collections import defaultdict
 
 import pandas
-import random
 import requests
-import argparse
-from collections import defaultdict
-from collections import Counter
 
 parser = argparse.ArgumentParser(description="Test for GO enrichment with Panther")
 parser.add_argument(

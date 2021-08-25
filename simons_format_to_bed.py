@@ -1,7 +1,5 @@
 #!/usr/bin/env python
-
 # convert simons format list of de novos to bed
-
 import sys
 
 # dict to convert simons id to IID scheme

@@ -1,10 +1,12 @@
 #!/usr/bin/env python
-
-from plotly.offline import download_plotlyjs, init_notebook_mode, plot, iplot
-import pandas as pd
 import matplotlib.pyplot as plt
-import plotly.plotly as py
+import pandas as pd
 import plotly.graph_objs as go
+import plotly.plotly as py
+from plotly.offline import download_plotlyjs
+from plotly.offline import init_notebook_mode
+from plotly.offline import iplot
+from plotly.offline import plot
 
 "file:/mnt/c/Users/Lohman/Documents/Autism/temp-plot.html"
 init_notebook_mode(connected=True)

@@ -8,7 +8,7 @@ import sys
 d = {}
 with open(sys.argv[2], 'r') as id_dict:
 	for IID, simons_id in (line.strip().split('\t') for line in id_dict):
-		d[simons_id] = IID	 
+		d[simons_id] = IID
 
 problem_samples = []
 
@@ -22,7 +22,7 @@ with open(sys.argv[1], 'r') as simons:
 			continue
 		chrom, end, ref, alt = ID.split(':')
 		start = int(end) - len(ref)
-		
+
 		if SampleID in d:
 		    print(chrom, start, end, ref, alt, SampleID,  sep = '\t', file = out)
 		else:

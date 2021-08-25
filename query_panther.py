@@ -26,7 +26,7 @@ result = defaultdict(list)
 for i, line in enumerate(text.split('\n')):
     if line in ('\r', ''):
         continue
-    
+
     for idx, toks in enumerate(line.split('\t')):
         key = header2idx[idx]
         result[key].append(toks)

@@ -9,7 +9,7 @@ import numpy
 # read in table of variants
 variants = pandas.read_table(sys.argv[1], low_memory = False)
 
-# define out file 
+# define out file
 out = open(sys.argv[1][:-4]+"_variants_in_genes_by_individual.txt", "w")
 
 # define list of genes of interest

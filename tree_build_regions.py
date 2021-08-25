@@ -6,7 +6,7 @@ from collections import defaultdict
 
 # STATUS: INCOMPLETE, not currently developing
 
-# USAGE: python tree_build_regions.py hapmap_combined_chroms.txt regions_with_name_hg37.tab 
+# USAGE: python tree_build_regions.py hapmap_combined_chroms.txt regions_with_name_hg37.tab
 hapmap = sys.argv[1]
 regions = sys.argv[2]
 # construct the tree

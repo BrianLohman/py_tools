@@ -27,14 +27,14 @@ for i, toks in enumerate(x.strip().split('\t') for x in open(bed)):
 			current_chrom = toks[0]
 			current_start = toks[1]
 			current_end = toks[2]
-		
+
 		# when the next region is totally contained in the current region
 		if int(toks[1]) > int(current_start) and int(toks[2]) > int(current_end):
 			continue
-		
+
 		# when the next region overlaps with the current region, extending the total region
 		if int(toks[1]) < int(current_end) and int(toks[2]) > int(current_end):
-			out.write('\t'.join([current_chrom, str(current_end+1), toks[2]+'\n'])) 
+			out.write('\t'.join([current_chrom, str(current_end+1), toks[2]+'\n']))
 			current_start = current_end + 1
 			current_end = toks[2]
 

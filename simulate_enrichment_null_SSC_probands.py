@@ -66,17 +66,17 @@ for i in range(1,1001):
 
     # Convert to pandas data frame
     df = pandas.DataFrame.from_dict(result)
-    
+
     # Remove duplicate column headers
     df = df.iloc[1:]
-    
+
     # convert FDR to float
     df.FDR = df.FDR.astype(float)
-   
+
     # drop gene name and remove duplicates
     df = df.drop('GeneId', axis = 1)
     df = df.drop_duplicates()
- 
+
     # list of uniq GO groups
     uniq_go = list(set(df.Name))
 

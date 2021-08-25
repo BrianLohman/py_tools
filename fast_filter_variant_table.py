@@ -3,7 +3,7 @@
 # read in variant tables and filter down to genes in given list
 # write the number of variants that each individual has in these genes to file
 
-# USAGE: python fast_filter_variant_table.py -v [variant table] -g [genes of interest] -o [output name] 
+# USAGE: python fast_filter_variant_table.py -v [variant table] -g [genes of interest] -o [output name]
 
 import dask.dataframe as ddf
 from dask.distributed import Client

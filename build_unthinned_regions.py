@@ -29,5 +29,3 @@ for toks in (x.strip().split('\t') for x in open('gene_models_hg38.txt')):
 
 	# print the chrom, start, end, name, and pathway
 	out.write('\t'.join([chrom, start, end, gene, pathway+'\n']))
-
- 

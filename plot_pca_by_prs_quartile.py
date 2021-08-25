@@ -34,7 +34,7 @@ x = []
 for fam in probands.family:
 #print(fam)
 #print(probands.loc[probands.family == fam])
-x.append(bmi_dict[fam]) 
+x.append(bmi_dict[fam])
 
 probands['mom_bmi_quartile'] = x
 
@@ -84,4 +84,3 @@ layout = dict(title = 'Residual Ancestry PCA colored by EA PRS stratification',
 fig = dict(data=data, layout=layout)
 
 iplot(fig, validate = False)
-

@@ -10,8 +10,8 @@ for i, toks in enumerate(x.strip().split("\t") for x in open(assoc_sorted)):
 
 	#print(toks[chrom])
 	#print(toks[start])
-	
+
 	end = int(toks[start]) + 1
 	#print(end)
-	
+
 	out.write("\t".join([toks[chrom], toks[start], str(end), "\n"]))

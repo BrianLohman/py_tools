@@ -55,7 +55,7 @@ scatter_df = observed_df.loc[observed_df.q_val <= 0.05]
 null_scatter_df = nlog_null_qvals.loc[:, nlog_null_qvals.columns.isin(list(scatter_df.GO_term))]
 null_scatter_df = null_scatter_df[scatter_df.GO_term]
 
-## plot mean and SD of null vs PRS 
+## plot mean and SD of null vs PRS
 trace0 = go.Scatter(
     x = list(range(1,scatter_df.shape[0]+1)),
     y = null_scatter_df.mean(),
@@ -167,13 +167,13 @@ trace0 = go.Histogram(
 
 data = [trace0]
 
-layout = {'title': go_dict[test_go_term], 
+layout = {'title': go_dict[test_go_term],
     'yaxis': dict(title = 'Frequency'),
     'xaxis': dict(title = '-log(Simulated q-value) vs. -log(observed q-value)'),
     'hovermode': 'closest',
-    'bargap': 0.1, 
+    'bargap': 0.1,
     'shapes':[{'type': 'line',
-        'x0':observed_df.loc[observed_df.GO_term == test_go_term].nlog_q_val.values[0], 
+        'x0':observed_df.loc[observed_df.GO_term == test_go_term].nlog_q_val.values[0],
         'y0':0,
         'x1':observed_df.loc[observed_df.GO_term == test_go_term].nlog_q_val.values[0],
         'y1':25,
@@ -238,12 +238,12 @@ html_string = '''
 <html>
     <!-- source plotly js -->
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-    
+
     <head>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
         <style>body{ margin:0 100; background:whitesmoke; }</style>
     </head>
-    
+
     <body>
         <h1>First Quartile of PRS for EA in Probands</h1>
 
@@ -252,7 +252,7 @@ html_string = '''
         '''+stick_plot_div+'''
         <p>Red dots outside of blue bars are GO terms significant beyond proband ascertainment bias. Hover over \
         lines to get GO term ID, GO term name, observed -log q-value, and simulated mean and standard deviation.</p>
-        
+
         <!-- *** Section 2 *** --->
         <h2>Fold enrichment as a function of p-value</h2>
         '''+enrichment_by_pval_div+'''

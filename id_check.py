@@ -3,7 +3,7 @@ import sys
 # compare keys (sample IDs) between two files
 # column that contains the key is specified by user
 
-# USAGE: python id_check.py [file A] [file B] [file A key] [file B key ] 
+# USAGE: python id_check.py [file A] [file B] [file A key] [file B key ]
 
 # Assumptions:
 # 1. files are tab delimited
@@ -47,5 +47,5 @@ while file_a_line != '' or file_b_line != '':
 
     # increment line counter
     line_no += 1
-    
+
 print(' '.join([str(n_success), "matches out of", str(line_no)]))

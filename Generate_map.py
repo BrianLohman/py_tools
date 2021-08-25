@@ -15,4 +15,3 @@ for line in open('simons.1kgsites.bim'):
     rsid=pos_to_rs[(chrom,pos)]
 
     print('\t'.join([chrom,rsid,'0',pos,ref,alt]))
-

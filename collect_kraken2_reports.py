@@ -6,7 +6,7 @@
 # Columns are individuals
 # 0 is used where a taxon was not observed in a given sample
 
-# USAGE: collect_kraken2_reports.py --dir [directory to look for reports in] --out [results file name] 
+# USAGE: collect_kraken2_reports.py --dir [directory to look for reports in] --out [results file name]
 
 import argparse
 import pandas
@@ -25,20 +25,20 @@ samples = []
 # loop through kraken2 reports
 for report in report_list:
 	print(report)
-	
+
 	# get sample ID from filename
 	sample_name = report.split('_')[-3]
 	sample_name = sample_name.split('/')[-1]
-	
+
 	# read in as pandas dataframe
 	sample = pandas.read_csv(report, sep="\t")
 	sample.columns = ["percent_total", "reads", "taxon_reads", "taxon", "NCBI_taxon_ID","name"]
-	
+
 	# strip white space from name columns
 	sample.name = sample.name.str.strip()
-	
+
 	# drop undesired columns
-	sample = sample[['name','reads']]	
+	sample = sample[['name','reads']]
 	sample.columns = ['name', sample_name]
 
 	# append current sample to list of samples

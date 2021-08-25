@@ -1,7 +1,7 @@
 # reduce the number of entries in the gene models file to 1 per gene
 # For each gene, list the smallest and largest position in bp
 
-# USAGE: python reduce_gene_models.py [gene_models] 
+# USAGE: python reduce_gene_models.py [gene_models]
 
 # ASSUMES: 1) the list of gene models is sorted based on gene name, 2) the same gene does not occur on more than one chromosome
 
@@ -23,7 +23,7 @@ for i, toks in enumerate(x.strip().split('\t') for x in open(gene_models)):
         start.append(int(toks[2]))
         end.append(int(toks[3]))
     else:
-        out.write('\t'.join([current_chrom, toks[1], str(min(start)), str(max(end)), current_gene+'\n'])) 
+        out.write('\t'.join([current_chrom, toks[1], str(min(start)), str(max(end)), current_gene+'\n']))
         start, end = [], []
         current_gene = toks[4]
 	current_chrom = toks[0]

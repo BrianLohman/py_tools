@@ -13,11 +13,11 @@ for toks in (x.strip().split("\t") for x in open(sys.argv[1])):
     # skip headers
     if str(toks[0]).startswith("@"):
         continue
-    
+
     # skip reads that don't map to reference
     if toks[2] == "*":
         continue
-    
+
     # skip reads with unmapped flags
     if toks[2] in '"{}"'.format([77,73,69,117,153,141,137,133]):
         unmapped_count +=1

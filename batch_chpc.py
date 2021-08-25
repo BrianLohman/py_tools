@@ -71,7 +71,7 @@ for line in open(args.commands):
        else:
            line_count += 1
            continue
-    
+
     else:
         if line_count == n_commands:
             o.write(str(line))
@@ -79,27 +79,26 @@ for line in open(args.commands):
                 o.write('wait')
 
             o.close()
-            
+
             if args.submit == True:
                 os.system("sbatch "+job_fh+".slurm")
             break
-    
+
         if line_count % int(args.ntasks) != 0:
             o.write(str(line))
             line_count += 1
             continue
 
-    if line_count % int(args.ntasks) == 0: 
+    if line_count % int(args.ntasks) == 0:
         o.write(str(line))
         if args.wait == True:
             o.write('wait')
 
         o.close()
-        
+
         if args.submit == True:
             os.system("sbatch "+job_fh+".slurm")
 
         job_fh = None
         line_count += 1
         continue
-

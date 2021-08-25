@@ -2,7 +2,7 @@
 
 import sys
 
-# USAGE: python intersect_pathway_SFARI.py [pathway bed file] 
+# USAGE: python intersect_pathway_SFARI.py [pathway bed file]
 
 # read in the SFARI gene list as a dictionary
 sfari = {}

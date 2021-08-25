@@ -19,7 +19,7 @@ for c in cols:
     tmp = tmp[tmp.iloc[:,2] > 0]
     n = tmp.columns[2]
     k = n.split(".")[0]
-        
+
     if k == "P1":
         groups[n] = tmp.iloc[:,0]
     if k == "S1":
@@ -55,7 +55,7 @@ for group in groups.keys():
             control = p.loc[~p.IID.isin(groups[group]), trait].values.astype(int)
         else:
             sys.exit("Invalid group")
-            
+
         result[group][trait] = {"case_mean": np.mean(case), "case_sd": np.std(case), "control_mean": np.mean(control), "control_sd": np.std(control), "pval": stats.ttest_ind(case, control, equal_var = False)[1]}
 
 o = open("CT_deNovo_ttest_results.txt", "w")
@@ -65,5 +65,5 @@ for group in groups.keys():
     for trait in traits:
     if result[group][trait]['pval'] < 0.05:
         print(group, trait, result[group][trait]['pval'], sep = "\t", file = o)
-        
+
 o.close()

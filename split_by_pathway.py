@@ -30,7 +30,7 @@ for (chrom, start, end, gene, pathway) in (l.strip().split('\t') for l in open(r
 
     if pathway in metabolism_sub:
         metabolism.write('\t'.join([chrom, start, end, gene, pathway+'\n']))
-    
+
     if pathway in immune_sub:
         immune.write('\t'.join([chrom, start, end, gene, pathway+'\n']))
 

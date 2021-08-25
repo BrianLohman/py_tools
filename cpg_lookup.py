@@ -2,7 +2,7 @@
 
 # with bed file, check to see if variants are in possible CpG context
 
-# USAGE: cpg_lookup.py [variant file] [reference genome] 
+# USAGE: cpg_lookup.py [variant file] [reference genome]
 
 from pyfaidx import Fasta
 import sys
@@ -22,7 +22,7 @@ for snp, sample, batch, allele, consequence, impact, symbol  in (line.strip().sp
 
     if snp == 'ID':
         continue
-    
+
     chrom, end, ref, alt = snp.strip().split(':')
     start = int(end) - 1
 
@@ -41,7 +41,6 @@ for snp, sample, batch, allele, consequence, impact, symbol  in (line.strip().sp
             print(snp, sample, batch, allele, consequence, impact, symbol, sep = '\t', file = cpg_bed)
         else:
             continue
-    
+
     else:
         continue
-

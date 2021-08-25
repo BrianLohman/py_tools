@@ -17,4 +17,4 @@ for g in gene_list:
         print pathway
 
         tmp = [gene,pathway]
-        out.write('\t'.join(tmp)+'\n') 
+        out.write('\t'.join(tmp)+'\n')

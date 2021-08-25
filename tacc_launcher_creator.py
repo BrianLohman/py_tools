@@ -2,7 +2,7 @@
 
 # Create TACC launchers for Stampede and Lonestar, and just run commands otherwise.
 # Depending on the host, launcher_creator.py generated a SLURM or SGE launcher as appropriate.
-# 
+#
 # Copyright 2013, Regents Of The University Of Texas At Austin
 # Originally written by Scott Hunicke-Smith
 # New version with SLURM support by Benjamin Goetz
@@ -14,7 +14,7 @@ except:
     print 'Try typing "module load python" and then running this again.'
     import sys
     sys.exit(1)
-    
+
 import os
 import sys
 import re
@@ -27,11 +27,11 @@ lonestar_parameters='''#!/bin/bash
 #
 # To use, build the launcher executable and your
 # serial application(s) and place them in your WORKDIR
-# directory.  Then, edit the CONTROL_FILE to specify 
+# directory.  Then, edit the CONTROL_FILE to specify
 # each executable per process.
 #-------------------------------------------------------
 #-------------------------------------------------------
-# 
+#
 #         <------ Setup Parameters ------>
 #
 #$ -N {name}
@@ -64,10 +64,10 @@ module load launcher
 '''
 
 parametric_job_submission='''
-export EXECUTABLE=$TACC_LAUNCHER_DIR/init_launcher 
+export EXECUTABLE=$TACC_LAUNCHER_DIR/init_launcher
 export CONTROL_FILE={control_file}
 export WORKDIR=.
-# 
+#
 # Variable description:
 #
 #  EXECUTABLE     = full path to the job launcher executable
@@ -153,15 +153,15 @@ def generate_lonestar_launcher(results, launcher_file):
         threads_per_node = 24
     else:
         threads_per_node = 12
-    
+
     if not results.wayness:
         results.wayness = 12
-    
+
     if results.allocation:
         allocation_line = '#$ -A {}'.format(results.allocation)
     else:
         allocation_line = ''
-    
+
     if results.email:
         email_line = '#$ -M {}\n#$ -m be\n'.format(results.email)
     else:
@@ -195,7 +195,7 @@ def generate_lonestar_launcher(results, launcher_file):
     if not results.submit_cmd:
         print 'Using {} nodes.'.format(num_nodes)
         print 'Writing to {}.'.format(results.launcher)
-    
+
     launcher_file.write(lonestar_parameters.format(
         name=results.name,
         wayness=results.wayness,
@@ -206,10 +206,10 @@ def generate_lonestar_launcher(results, launcher_file):
         email_line=email_line,
         hold_line=hold_line,
         allocation_line=allocation_line))
-    
+
     launcher_file.write(bash_and_modules.format(modules=results.modules,
                bash_commands=results.bash_commands))
-               
+
     if results.job:
        launcher_file.write(parametric_job_submission.format(control_file=results.job))
 
@@ -249,7 +249,7 @@ def generate_stampede_launcher(results, launcher_file):
                 return
         else:
             num_jobs = 1
-    
+
         if results.wayness:
             num_nodes, remainder = divmod(num_jobs, results.wayness)
             if remainder != 0:
@@ -258,12 +258,12 @@ def generate_stampede_launcher(results, launcher_file):
         else:
             num_nodes, remainder = divmod(num_jobs, 16)
             if remainder != 0:
-                num_nodes += 1                
+                num_nodes += 1
     else:
         # A number of nodes has been specified. Default wayness is 16 on Stampede. Use specified wayness to calculate total tasks.
         num_nodes = results.num_nodes
         num_nodes_line = '#SBATCH -N {}\n'.format(num_nodes)
-        
+
         if results.wayness:
             num_jobs = num_nodes * results.wayness
         else:
@@ -300,10 +300,10 @@ def check_time_and_queue(results):
     if results.time == None:
         parser.print_help()
         sys.exit('You did not give a job time (-t hh:mm:ss).')
-    
+
     time_match = re.match(r'(\d?\d):(\d\d):(\d\d)', results.time)
     if not time_match:
-        sys.exit( 'Your time argument -t ' + results.time + ' is not in the right format.' + '\n' +  
+        sys.exit( 'Your time argument -t ' + results.time + ' is not in the right format.' + '\n' +
                   'Please change it to match (-t hh:mm:ss).' )
 
     hh = int(time_match.group(1))
@@ -325,7 +325,7 @@ def check_time_and_queue(results):
     else:                                                       time_limit = 24
 
     if (hh > time_limit) or (hh == time_limit and (mm > 0 or ss > 0)):
-        sys.exit( 'Your time argument -t ' + results.time + ' exceeds the ' + 
+        sys.exit( 'Your time argument -t ' + results.time + ' exceeds the ' +
                         str(time_limit) + ' hour limit for the ' + results.queue + ' queue' + '\n' +
                   'on this machine. Please change queue or reduce requested time.' )
 
@@ -334,7 +334,7 @@ def main():
     # Get environment variables, os.environ.get returns 'none' if the environment variable isn't defined
     env_allocation = os.environ.get('ALLOCATION')
     env_email_address = os.environ.get('EMAIL_ADDRESS')
-    
+
     parser = argparse.ArgumentParser(description='''Create TACC launchers for Stampede and Lonestar, and just run commands otherwise.
 Depending on the host, launcher_creator.py generated a SLURM or SGE launcher as appropriate.
 Report problems to rt-other@ccbb.utexas.edu''')
@@ -355,13 +355,13 @@ Report problems to rt-other@ccbb.utexas.edu''')
     optional.add_argument('-s', dest='submit_cmd', action='store_true', help='Echoes the launcher filename to stdout.')
     deprecated = parser.add_argument_group('Deprecated', 'Rewrite any scripts that use this.')
     deprecated.add_argument('-H', action='store', dest='hold', help='Hold job in queue until the job specified in this option finishes.')
-    
+
     results = parser.parse_args()
 
     # Handle allocation defaults
     # if not results.allocation:
     #     results.allocation = os.environ.get('ALLOCATION')
-    
+
     # Check for required parameters
     # if results.name == None:
     #     print 'You did not give a job name (-n <name>).'
@@ -383,24 +383,24 @@ Report problems to rt-other@ccbb.utexas.edu''')
         else:
             print '-== Neither a job file nor bash commands given. You need at least one to do anything! ==-'
             return
-    
+
     if not results.submit_cmd:
         print 'Project {}.'.format(results.name)
         print 'Using job file {}.'.format(results.job)
         print 'Using {} queue.'.format(results.queue)
         print 'For {} time.'.format(results.time)
         print 'Using {} allocation.'.format(results.allocation)
-    
+
     # if (results.hold != None) and not results.submit_cmd:
     #     print 'Holding until {} finishes.'.format(results.hold)
-    
+
     if not results.submit_cmd:
         if results.email != None:
             print 'Sending start/stop email to {}.'.format(results.email)
         else:
             print 'Not sending start/stop email.'
-    
-    
+
+
     host = subprocess.check_output("hostname").split('.')[1]
 
     if not results.launcher:
@@ -411,9 +411,9 @@ Report problems to rt-other@ccbb.utexas.edu''')
         else:
             results.launcher
 
-    
+
     launcher_file = open(results.launcher, 'w')
-    
+
     if host == "ls4":
         generate_lonestar_launcher(results, launcher_file)
     elif host == "stampede":

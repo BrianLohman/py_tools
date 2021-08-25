@@ -42,21 +42,21 @@ for chrom in set(genes.chrom):
         diffs_end = row.end - chrom_hapmap.bp
 
         # check for the lowest value that is > 0, becuase column is sorted
-        min_val, min_idx = None, None    
+        min_val, min_idx = None, None
         for i,d in enumerate(diffs_start):
             if i == 0:
                 min_val = d
                 continue
-            
+
             if d > min_val:
                     continue
-            if d < min_val:    
+            if d < min_val:
                     min_val = d
                     min_idx = i
 
             if d < 0:
-                break    
-        
+                break
+
         # check for the first value that is < 0, becuase column is sorted
         max_val, max_idx = None, None
         for i,d in enumerate(diffs_end):

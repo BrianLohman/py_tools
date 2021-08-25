@@ -10,7 +10,7 @@ for i, toks in enumerate(x.strip().split("\t") for x in open(assoc_sorted)):
 	end = 6
 
 	start = int(toks[end]) - 1
-	
+
 	chrom_full = "".join(['chr', str(toks[chrom])])
 
 	out.write("\t".join([chrom_full, str(start), toks[end], "\n"]))

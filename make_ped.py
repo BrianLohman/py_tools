@@ -44,18 +44,18 @@ for line in open(crams):
         mother = '0'
         father = '0'
     else:
-        father = simons_to_bam[family + '.fa'] 
+        father = simons_to_bam[family + '.fa']
         mother = simons_to_bam[family + '.mo']
 
     # assign phenotype
     if role == 'p1':
-        pheno = '1' 
+        pheno = '1'
     else:
         pheno = '0'
 
     # assign path to cram
     path = "s3://sscwgs-hg38/" + crams.split('_')[0] + '/' + individualID + ".final.cram"
-    
+
     # assign path to crai
     crai = "s3://sscwgs-hg38/crais/" + crams.split('_')[0] + '/' + individualID + ".final.cram.crai"
 

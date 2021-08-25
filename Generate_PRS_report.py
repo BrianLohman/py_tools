@@ -64,7 +64,7 @@ null_scatter_df = null_scatter_df[scatter_df.GO_term]
 #build a dict of name to GO term
 name_dict = pd.Series(scatter_df.GO_term.values, index = scatter_df.Name).to_dict()
 
-## plot mean and SD of null vs PRS 
+## plot mean and SD of null vs PRS
 trace0 = go.Scatter(
     x = list(range(1,scatter_df.shape[0]+1)),
     y = null_scatter_df.mean(),
@@ -169,19 +169,19 @@ names = []
 all_go_terms = scatter_df.GO_term
 #all_go_terms = ["GO:0086010"]
 
-for test_go_term in all_go_terms: 
+for test_go_term in all_go_terms:
     # start dictionary with basic info
     GO = {}
     GO['go_id'] = test_go_term
-    GO['name'] = go_dict[test_go_term] # lookup from prior dict 
+    GO['name'] = go_dict[test_go_term] # lookup from prior dict
 
     # save list of names for dropdown menus later
     names.append(go_dict[test_go_term])
-    
+
     ## plotting histogram of null q-values
     GO['hist_vals'] = list(nlog_null_qvals[test_go_term].values)
     GO['hist_line'] = observed_df.loc[observed_df.GO_term == test_go_term].nlog_q_val.values[0]
-    
+
     ## Explore simulations with test statistics more extreme than observed statistic
     # observed value
     test_stat = observed_df.loc[observed_df.GO_term == test_go_term].nlog_q_val.values[0]
@@ -223,7 +223,7 @@ for test_go_term in all_go_terms:
 
     # save to dict
     GO['gene_header'] = gene_header
-    
+
     gene_table = []
     for i in range(len(outlier_genes.index)):
         gene = outlier_genes.index.values[i]
@@ -274,7 +274,7 @@ for test_go_term in all_go_terms:
 
     # save to dict
     GO['sample_header'] = sample_header
-    
+
     sample_lists = []
     for i in range(len(outlier_samples.index)):
         sample = sample_table.index.values[i]
@@ -285,7 +285,7 @@ for test_go_term in all_go_terms:
 
     # add to dictionary
     GO['sample_table'] = sample_lists
-    
+
     # add all data from each GO term to dict, keyed by GO term ID
     master_GO_dict[test_go_term] = GO
 
@@ -312,7 +312,7 @@ TEMPLATE = '''
             }
         </style>
     </head>
-    
+
     <body>
         <h1 align = 'center'>[TITLE]</h1>
 
@@ -321,7 +321,7 @@ TEMPLATE = '''
         [STICK_PLOT_DIV]
         <p>Red dots outside of blue bars are GO terms significant beyond proband ascertainment bias. Hover over \
         lines to get GO term ID, GO term name, observed -log q-value, and simulated mean and standard deviation.</p>
-        
+
         <!- - *** Section 2 *** - ->
         <h2>Fold enrichment as a function of p-value</h2>
         [PVAL_DIV]
@@ -342,10 +342,10 @@ TEMPLATE = '''
                 [TERM_SELECT]
             </select>
         </div>
-        
+
         <h2>Histogram of GO terms that are more significant than expected by proband ascertainment bias</h2>
         <div id = 'hist_div_id'> </div>
-        
+
         <p>Vertical red line indicates value of observed test statistic. Hover over bars to get simulation IDs from \
         Monte Carlo used to generate null hypothesis.</p>
 
@@ -373,20 +373,20 @@ const build_hist = (go) => {
     hist_vals = data[go]['hist_vals']
     hist_line = data[go]['hist_line']
     hist_title = data[go]['name']
-    
+
     var trace = {
         x: hist_vals,
         type: 'histogram'
     }
     var hist_data = [trace]
-    
-    hist_layout = {'title': hist_title, 
+
+    hist_layout = {'title': hist_title,
         'yaxis': {title: 'Frequency'},
         'xaxis': {title: '-log(Simulated q-value) vs. -log(observed q-value)'},
         'hovermode': 'closest',
-        'bargap': 0.1, 
+        'bargap': 0.1,
         'shapes':[{'type': 'line',
-            'x0':hist_line, 
+            'x0':hist_line,
             'y0':0,
             'x1':hist_line,
             'y1':1,
@@ -394,7 +394,7 @@ const build_hist = (go) => {
             'line':{'color':'red','width': 3}
         }]
     }
-    
+
     let hist_plot = document.getElementById("hist_div_id")
     Plotly.react(hist_plot, hist_data, hist_layout)
 
@@ -407,14 +407,14 @@ const build_table = (go) => {
     $('#gene_table tbody').empty()
     $('#gene_table thead').empty()
     if ( $.fn.DataTable.isDataTable('#sample_table') ) {
-      $('#sample_table').DataTable().destroy()  
+      $('#sample_table').DataTable().destroy()
     }
     $('#sample_table tbody').empty()
     $('#sample_table thead').empty()
-    
+
     gene_table = $("#gene_table").DataTable({
         data: data[go]['gene_table'],
-        columns: data[go]['gene_header'], 
+        columns: data[go]['gene_header'],
         scrollY: '600px',
         scrollX: true,
         scrollCollapse: true,
@@ -426,7 +426,7 @@ const build_table = (go) => {
 
     sample_table = $("#sample_table").DataTable({
         data: data[go]['sample_table'],
-        columns: data[go]['sample_header'], 
+        columns: data[go]['sample_header'],
         scrollY: '600px',
         scrollX: true,
         scrollCollapse: true,
@@ -437,7 +437,7 @@ const build_table = (go) => {
     })
 }
 
-$('#go_select').on("change", () => { 
+$('#go_select').on("change", () => {
     go = $('#go_select :selected').val()
     build_table(go)
     build_hist(go)
